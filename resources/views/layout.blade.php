@@ -19,8 +19,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="google-site-verification" content="LxHKqj-7LHr4nr1F8SSnd7J2_vI1H0lgTg2s1hb-t7A" />
-    <link rel="icon" type="image/png" href="/img/perfil.png">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="icon" type="image/png" href="/img/logo_ari_CRM.png">
+    <title>{{ config('app.name', 'Duomo') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         

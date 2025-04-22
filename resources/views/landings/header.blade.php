@@ -1,7 +1,7 @@
 <header id="main-header" class="px-4 lg:px-6 py-4 flex items-center justify-center border-b sticky top-0 bg-white h-15 gap-5">
     <!-- div que contiene el logo -->
     <div class="div-logo cursor-pointer" onclick="reloadPage()">
-        <img class="h-10" src="https://elemental.aricrm.co/img/ptp_logo.jpg" alt="Logo PTP">
+        <img class="h-10" src="/img/logo_ari_CRM.png" alt="Logo ARI">
     </div>
     <!-- fin del div que contiene el logo -->
 

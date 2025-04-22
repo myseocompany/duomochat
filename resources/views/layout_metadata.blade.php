@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-     <title>Elemental Para Tu Piel</title>
-    <link rel="icon" href="/images/favicon.ico"/>
+     <title>Duomo</title>
+     <link rel="icon" href="/img/logo_ari_CRM.png">
+
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script type="text/javascript" src="{{ asset('js/jquery.nestable.js') }}"></script>
@@ -13,7 +14,7 @@
   <body>
      <!-- @include('layouts.navigation_metadata')-->
     <div class="container">
-       <strong><img src="/img/logo_elemental_256_70.gif" alt="logo para tu piel" id="logo" ></strong>
+       <strong><img src="/img/logo_ari_CRM.png" alt="logo para tu piel" id="logo" ></strong>
     </div>
      
      @yield('content')

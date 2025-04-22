@@ -4,13 +4,13 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="/">
-                    <img src="/img/perfil.png" alt="Logo" class="h-10">
+                    <img src="/img/logo_ari_CRM.png" alt="Logo" class="h-10">
                 </a>
             </div>
   
             <!-- Desktop Links -->
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="/" class="text-gray-700 hover:text-blue-600 font-medium">Inicio</a>
+                <a href="/login" class="text-gray-700 hover:text-blue-600 font-medium">Inicio</a>
   
                 @auth
                     @if(Auth::user()->role_id == 1)
