@@ -27,9 +27,8 @@
                             </button>
                             <div x-show="open" @click.away="open = false"
                                  class="absolute mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded z-50">
-                                <a href="/audiences/1/customers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Magistrales</a>
-                                <a href="/audiences/2/customers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Terminados</a>
-                                <a href="/audiences/3/customers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Descuento</a>
+                                <a href="/audiences/1/customers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Benevento</a>
+                                <a href="/audiences/2/customers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Emmanuel</a>
                             </div>
                         </div>
                         <div x-data="{ open: false }" class="relative">
@@ -111,9 +110,8 @@
                 <a href="/customers/phase/1" class="block py-2 text-gray-700 hover:text-blue-600">Contactos</a>
                 <a href="/orders" class="block py-2 text-gray-700 hover:text-blue-600">Órdenes</a>
                 <a href="/products" class="block py-2 text-gray-700 hover:text-blue-600">Productos</a>
-                <a href="/audiences/1/customers" class="block py-2 text-gray-700 hover:text-blue-600">Magistrales</a>
-                <a href="/audiences/2/customers" class="block py-2 text-gray-700 hover:text-blue-600">Terminados</a>
-                <a href="/audiences/3/customers" class="block py-2 text-gray-700 hover:text-blue-600">Descuento</a>
+                <a href="/audiences/1/customers" class="block py-2 text-gray-700 hover:text-blue-600">Benevento</a>
+                <a href="/audiences/2/customers" class="block py-2 text-gray-700 hover:text-blue-600">Emmanuel</a>
             @elseif(Auth::user()->role_id == 9)
                 <a href="/orders" class="block py-2 text-gray-700 hover:text-blue-600">Órdenes</a>
             @endif

@@ -13,7 +13,7 @@
 		<tr>
 			<td>{{$item->id}}</td>
 			<td><a href="/audiences/{{$item->id}}/customers">{{$item->name}}</a></td>
-			<td><a href="/audiences/{{$item->id}}/show">Ver</a></td>
+			<td><a href="/audiences/{{$item->id}}/customers">Ver</a></td>
 
 			<td>
 				<div class="form-group">
