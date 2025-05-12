@@ -111,46 +111,55 @@
     @include('customers.filter')
   </div>
 
-<div>
-  
-  @if($customersGroup->count()>-1)
+  <div>
+  @if($customersGroup->count() > -1)
+    <ul class="groupbar bb_hbox" id="dashboard">
+      @foreach($customersGroup as $item)
+        <li class="groupBarGroup" 
+            style="
+              background-color: {{ $item->status_color }}; 
+              width: {{ 100 / $customersGroup->count() }}%; 
+              margin-right: 8px; 
+              border-radius: 12px;
+              padding: 10px;
+              box-sizing: border-box;
+              overflow-wrap: break-word;
+              text-align: center;
+              color: #fff;
+              font-weight: bold;
+            ">
+          <h3 style="margin: 0; font-size: 24px;">{{ $item->count }}</h3>
+          <div style="margin-top: 5px;">
+            <a href="#" 
+               onclick="changeStatus({{ $item->id }})" 
+               style="color: #fff; text-decoration: underline; display: inline-block;">
+              {{ $item->status_name }}
+            </a>
+          </div>
+        </li>          
+      @endforeach
+    </ul>
 
-  
-  <ul class="groupbar bb_hbox" id="dashboard">
-  
-    @foreach($customersGroup as $item)
-    <li class="groupBarGroup" style="background-color: {{$item->status_color}}; width: <?php 
-        if($customersGroup->count()!=0){
-          echo 100/$customersGroup->count();
-        }
-     ?>%">
-      <h3>{{$item->count}}</h3>
-     
-      <div><a href="#" onclick="changeStatus({{$item->id}})">{{$item->status_name}}</a></div>
-    </li>          
-    @endforeach
-  </ul>
+    <style>
+      #dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px 0;
+        gap: 8px;
+      }
 
-  <style>
-      @media screen and (max-width: 992px) {
+      @media screen and (max-width: 992px),
+             screen and (max-width: 600px) {
         #dashboard {
           display: none;
         }
       }
-
-      /* On screens that are 600px wide or less, the background color is olive */
-      @media screen and (max-width: 600px) {
-        #dashboard {
-          display: none;
-        }
-      }
-  </style>
-  
-
+    </style>
   @else
     Sin Estados
   @endif
 </div>
+
 
 {{-- Alertas --}}
   @if (session('status'))
