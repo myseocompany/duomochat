@@ -142,7 +142,6 @@
         padding: 12px 10px;
         text-align: center;
         color: white;
-        font-weight: bold;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         min-height: 90px;
         display: flex;
