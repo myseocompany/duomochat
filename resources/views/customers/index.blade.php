@@ -113,30 +113,16 @@
 
   <div>
   @if($customersGroup->count() > -1)
-    <ul class="groupbar bb_hbox" id="dashboard">
+    <ul class="groupbar" id="dashboard">
       @foreach($customersGroup as $item)
-        <li class="groupBarGroup" 
-            style="
-              background-color: {{ $item->status_color }}; 
-              width: {{ 100 / $customersGroup->count() }}%; 
-              margin-right: 8px; 
-              border-radius: 12px;
-              padding: 10px;
-              box-sizing: border-box;
-              overflow-wrap: break-word;
-              text-align: center;
-              color: #fff;
-              font-weight: bold;
-            ">
-          <h3 style="margin: 0; font-size: 24px;">{{ $item->count }}</h3>
-          <div style="margin-top: 5px;">
-            <a href="#" 
-               onclick="changeStatus({{ $item->id }})" 
-               style="color: #fff; text-decoration: underline; display: inline-block;">
+        <li class="groupBarGroup" style="background-color: {{ $item->status_color }}">
+          <h3>{{ $item->count }}</h3>
+          <div class="status-name">
+            <a href="#" onclick="changeStatus({{ $item->id }})">
               {{ $item->status_name }}
             </a>
           </div>
-        </li>          
+        </li>
       @endforeach
     </ul>
 
@@ -144,14 +130,48 @@
       #dashboard {
         display: flex;
         flex-wrap: wrap;
+        gap: 12px;
         padding: 10px 0;
-        gap: 8px;
+        justify-content: flex-start;
       }
 
-      @media screen and (max-width: 992px),
-             screen and (max-width: 600px) {
+      .groupBarGroup {
+        flex: 1 1 150px;
+        max-width: 180px;
+        border-radius: 14px;
+        padding: 12px 10px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        min-height: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .groupBarGroup h3 {
+        font-size: 22px;
+        margin: 0;
+      }
+
+      .status-name a {
+        display: block;
+        color: white;
+        text-decoration: underline;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        font-size: 14px;
+        margin-top: 4px;
+      }
+
+      @media screen and (max-width: 992px) {
         #dashboard {
-          display: none;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+        }
+        .groupBarGroup {
+          flex: 0 0 auto;
         }
       }
     </style>
