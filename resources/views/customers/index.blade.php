@@ -505,7 +505,6 @@
 
       function loadButton(id){
         console.log(getSelectedMessage());
-        $("#div_campaign_button_"+id).html('<br><a href="'+getSelectedMessage('@if(isset($item)){{$item->getPhone()}}@endif',id)+')" name="campaign_button" id="campaign_button" class="btn btn-sm btn-primary my-2 my-sm-0" target="_blanck"> Enviar</a>')
       }
 
       function getSelectedMessage(phone, id){
