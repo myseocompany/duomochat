@@ -60,7 +60,7 @@ legend.scheduler-border {
 
     </style>
   </head>
-  <body class="bg-gray-50 text-gray-800">
+  <body class="bg-gray-150 text-gray-800">
     <div id="main-navigation">
         @include('layouts.navigation')
     </div>
