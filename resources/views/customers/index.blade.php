@@ -229,7 +229,7 @@
 		 		 
                 {{-- fin colores --}}
                 <!--<tr @if(Auth::user()->role_id == 1) onmouseover="showEditIcon({{$item->id}});" onmouseout="hideEditIcon({{$item->id}});" @endif>-->
-                <tr class="customer_row bg-white py-3">
+                <tr class="customer_row bg-white space-y-3">
                 
                 <td class="initials">
                     <div class="customer-circle" style="background-color: <?= $item->getStatusColor(); ?>">
