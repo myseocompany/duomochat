@@ -65,7 +65,7 @@ legend.scheduler-border {
         @include('layouts.navigation')
     </div>
   
-    <main class="pt-20 mx-auto">
+    <main class="pt-20 mx-auto px-3">
         @yield('content')
         @include('layouts.footer')
     </main>
