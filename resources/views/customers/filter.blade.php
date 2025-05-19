@@ -111,7 +111,7 @@
     </select>
 -->
     <select name="source_id" class="custom-select" id="source_id" onchange="submit();">
-      <option value="">Fuente...</option>
+      <option value="">Origen...</option>
       @foreach($sources as $item)
         <option value="{{$item->id}}" @if ($request->source_id == $item->id) selected="selected" @endif>
            <?php echo substr($item->name, 0, 15); ?>
