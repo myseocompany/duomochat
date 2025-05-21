@@ -45,28 +45,6 @@
           <input type="text" class="form-control" id="document" name="document" value="{{$model->document}}" placeholder="Doc Ej: C.c/DNI...">
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-
-          <label for="document">Fecha de cumpleaños:</label>
-          <?php
-          if (isset($model->birthday))
-            $birthday = Carbon\Carbon::createFromFormat('Y-m-d', $model->birthday)->format('Y-m-d');
-          else
-            $birthday = "";
-
-          ?>
-          <input type="date" class="form-control" id="birthday" name="birthday" placeholder="YYYY/MMM/DD" @if(isset($model->birthday)) value="{{$birthday}}" @endif >
-
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-            <label for="birthday_updated">¿Cumpleaños actualizado manualmente?</label><br>
-            <input type="checkbox" id="birthday_updated" name="birthday_updated" value="1"
-                   @if(isset($model->birthday_updated) && $model->birthday_updated) checked @endif>
-        </div>
-    </div>
 
 
       <div class="col-sm-3">
@@ -80,15 +58,6 @@
           </select>
         </div>
       </div>
-
-
-
-
-
-
-
-
-
 
       <div class="col-sm-3">
         <div class="form-group">
@@ -121,32 +90,10 @@
 
   {{-- Fin datos de contacto --}}
   <fieldset class="scheduler-border">
-    <legend class="scheduler-border">Orden:</legend>
-    {{-- Estado --}}
-
-    <div class="form-group">
-      <label for="bought_products">Productos en la orden:</label>
-      <textarea class="form-control" name="bought_products" id="bought_products" cols="30" rows="10" placeholder="Producto">{{$model->bought_products}}</textarea>
-
-    </div>
-    <div class="">
-      <label for="total_sold">Total:</label>
-      <input name="total_sold" id="total_sold" placeholder="" class="form-control" value="{{$model->total_sold}}">
-    </div>
-  </fieldset>
-  <fieldset class="scheduler-border">
     <legend class="scheduler-border">Datos Adicionales:</legend>
     {{-- Estado --}}
     {{-- fuente --}}
 
-    <div class="">
-      <label for="pathology">Patología:</label>
-      <textarea name="pathology" id="pathology" placeholder="" cols="30" rows="5" class="form-control">{{$model->pathology}}</textarea>
-    </div>
-    <div class="">
-      <label for="hobbie">Pasatiempos:</label>
-      <textarea name="hobbie" id="hobbie" placeholder="" cols="30" rows="5" class="form-control">{{$model->hobbie}}</textarea>
-    </div>
     <div class="">
       <label for="notes">Notas:</label>
       <textarea name="notes" id="notes" placeholder="" cols="30" rows="5" class="form-control">{{$model->notes}}</textarea>

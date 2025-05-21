@@ -1,6 +1,10 @@
 <div class="sticky bottom-0 bg-white border-t z-40 px-4 pt-3 pb-4 shadow-inner">
   <form method="POST" action="/customers/{{ $model->id }}/action/store" class="space-y-3">
     @csrf
+    <input type="hidden" name="customer_id" value="{{ $model->id }}">
+    @if(isset($pending_action))
+      <input type="hidden" name="pending_action_id" value="{{ $pending_action->id }}">
+    @endif
 
     <textarea name="note" rows="2"
       class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
