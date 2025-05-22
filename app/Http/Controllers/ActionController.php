@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon;
 use App\Models\Role;
@@ -16,36 +17,68 @@ use Mail;
 use App\Models\DateTime;
 use App\Models\ActionType;
 
+use App\Services\ActionService;
+
 class ActionController extends Controller
 {
-    
+    public function __construct(ActionService $actionService)
+    {
+        $this->actionService = $actionService;
+
+    } 
+
    public function show($id)
     {
         $model = Action::find($id);
         return view('actions.show', compact('model')); 
     }
-	
+    
 
-  	// iud es user_id , eid es email_id 
-  	public function trackEmail($cid, $eid)
-    {
-    	$customer = Customer::find($cid);
-    	if($customer){
-			if($customer->status_id==1 || $customer->status_id==18 || $customer->status_id==9){
-				$customer->status_id=19;
-				$customer->save();}
+    // iud es user_id , eid es email_id 
+    public function trackEmail($cid, $eid){   
+        
+        $customer = Customer::find($cid);
+        if($customer){
+            if(empty($customer->status_id)){
+                $customer->status_id=19;            
+            }
+            else if($customer->status_id==1){
+                $customer->status_id=19; 
+            }
+            else if ($customer->status_id==null) {
+                $customer->status_id=19;
+            } 
+            
+            $customer->save();
             $email = Email::find($eid);
+            Action::saveAction($cid, $eid, 4); //LEYO EL EMAIL
 
-	        Action::saveAction($cid, $eid, 4);
-
-	        $subjet = 'El usuario '.$customer->name.' ha abierto el correo! '.$email->subjet;
-	        $body= 'El usuario '.$customer->name.' ha abierto el correo!</br><a href="https://mqe.quirky.com.co/customers/'.$cid.'/show">https://mqe.quirky.com.co/customers/'.$cid.'/show</a>';
-	        $user = User::find(10);
+            $subjet = 'El usuario '.$customer->name.' ha abierto el correo! '.$email->subjet;
+            $body= 'El usuario '.$customer->name.' ha abierto el correo!</br>
+            <a href="http:/xtensor.quirky.com.co/customers/'.$cid.'/show">http:/xtensor.quirky.com.co/customers/'.$cid.'/show</a>';
+            $user = User::find(4);//4 Soporte Rapido
+            
             $this->sendTrackEmail($user, $customer);
-
-            $user = User::find(11);
+            /*
+            $user = User::find(7);
             $this->sendTrackEmail($user, $customer);
+            */
+        }  
+        return \Response::stream(function () {
+            $filename = 'https:/xtensor.quirky.com.co/img/logo.png';
+            readfile($filename);
+        }, 200, ['content-type' => 'image/png']);
+        
+        if(false !== ($data = file_get_contents('https:/xtensor.quirky.com.co/img/logo.jpg'))){
+          header('Content-type: image/jpg');
+          echo $data;
         }
+    }
+
+
+    public function trackEmailCode(Request $request)
+    {
+        
     }
 
     public function sendTrackEmail($user, $customer){
@@ -61,272 +94,100 @@ class ActionController extends Controller
         Mail::send($view, $emailcontent, function ($message) use ($user, $subject){
                 $message->subject($subject);
                 $message->to($user->email);
-            });   
+            });
+
     }
 
     public function sendMail($subjet,$body, $user) {
 
-		$send = Email::raw($body, function ($message) use ($user, $subjet){
-		        
-	        $message->from('noresponder@mqe.com.co', 'Maquiempanadas');
+        $send = Email::raw($body, function ($message) use ($user, $subjet){
+                
+            $message->from('nicolascompany.co', 'My SEO Company');
 
-	        $message->to($user->email, $user->name)->subject($subjet);  
-	        return "mailed"; 
+            $message->to($user->email, $user->name)->subject($subjet);  
+            return "mailed"; 
 
-	    });
-	}
-	public function index( Request $request){
+        });
+    }
+    public function index( Request $request){
 
-		$model = $this->filterModel($request);
-		$users = User::where('status_id' , '=' , 1)
-			->get();
-		$action_options = ActionType::orderBy('weight')->get();
+        
+        // calculo los request de las acciones pendientes
+        $overdueRequest = $this->actionService->createFilteredRequest($request, 'overdue');
+        $todayRequest = $this->actionService->createFilteredRequest($request, 'today');
+        $upcomingRequest = $this->actionService->createFilteredRequest($request, 'upcoming');
+        
 
+        // calculo los recordSet de las acciones filtradas 
+        $overdueActions = $this->actionService->filterModel($overdueRequest, true);
+        $todayActions = $this->actionService->filterModel($todayRequest, true);
+        $upcomingActions = $this->actionService->filterModel($upcomingRequest, true);
+        $model = $this->actionService->filterModel($request, false);
 
-		return view('actions.index', compact('model','users', 'action_options','request'));
-	}
+        
+        $users = User::where('status_id' , '=' , 1)->get();
+        $action_options = ActionType::all();
+        $statuses_options = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
+        
 
-    public function indexPending( Request $request){
-        /*BUSCAR LOS QUE TIENEN ACCIONES*/
-         $customers_id = Action::
-                        rightJoin('customers', 'actions.customer_id', 'customers.id')
-                        ->join('action_types', 'action_types.id', 'actions.type_id')
-                        ->where('action_types.outbound', 1)
-                        ->select(DB::raw('DISTINCT(customers.id)')) 
-                        ->groupBy('customers.id')         
-                        ->get();    
-
-        $array_customer_id = array();
-        foreach ($customers_id as $key => $value) {
-            $array_customer_id[] = $value["id"];
-        }
-        $year = date("Y");
-        $month = date("n");
-
-
-
-        $model = Customer::
-                        whereNotIn('id', $array_customer_id)
-                        ->whereYear('created_at' ,$year) 
-                        ->whereMonth('created_at' ,$month) 
-                        ->orderBy('created_at', 'DESC')
-                        ->get();
-        $total_pending_action = $this->getPendingActions();
-
-        $users = User::where('status_id' , '=' , 1)
-            ->get();
-
-            //dd($model);
-        $action_options = ActionType::orderBy('weight')->get();   
-
-
-
-        //CLientes con acciones de Salida
-        $customers_whith_actions = Customer::
-                        leftjoin('actions', 'actions.customer_id', 'customers.id')
-                        ->join('action_types', 'action_types.id', 'actions.type_id')
-                        ->where('action_types.outbound', 1)
-                        ->whereYear('actions.created_at' ,$year) 
-                        ->whereMonth('actions.created_at' ,$month) 
-                        ->select(DB::raw('DISTINCT(customers.id), customers.name, customers.status_id, customers.created_at as customer_created_at, customers.phone, customers.email, customers.source_id, customers.status_id, actions.created_at as action_created_at')) 
-                        ->groupBy('customers.id','customers.name', 'customers.status_id', 'customers.created_at', 'actions.created_at', 'customers.phone', 'customers.email', 'customers.source_id','customers.status_id')  
-                        ->orderBy('actions.created_at', 'DESC')       
-                        ->get();
-
-
-        $from_date = date("Y-m-d"). " 00:00:00";
-        $to_date = date("Y-m-d"). " 23:59:59";
-
-        /*GRAFICO*/
-        $new_customers = Customer::whereYear('created_at' ,$year) 
-                        ->whereMonth('created_at' ,$month) 
-                        ->count();
-
-        $attended_customers = Customer::
-                            join('actions', 'actions.customer_id','customers.id')
-                            ->join('action_types','action_types.id','actions.type_id')
-                            ->where('action_types.outbound', 1)
-                            //->whereBetween('customers.created_at', array($from_date, $to_date))
-                            ->whereYear('customers.created_at' ,$year) 
-                            ->whereMonth('customers.created_at' ,$month) 
-                            ->select(DB::raw('COUNT(DISTINCT(customers.id)) as count')) 
-                            ->first();
-        /*FIN GRAFICO*/
-
-
-
-        //SELECT count(a.customer_id), c.* FROM `customers` c left join actions a on c.id = a.customer_id inner join action_types aty on aty.id = a.type_id where c.user_id is not null and aty.outbound = 1 and c.status_id in(1,4,28) and c.created_at between "" GROUP by c.id
-
-        $this_date = date('Y-m-j');
-        $last_date = strtotime ( '-3 month' , strtotime ( $this_date ) ) ;
-        $last_date = date ( 'Y-m-j' , $last_date );
-        $active_customers = Customer::
-                            leftJoin('actions', 'actions.customer_id','customers.id')
-                            ->join('action_types','action_types.id','actions.type_id')
-                            ->where('action_types.outbound', 1)
-                            ->whereNotNull('customers.user_id')
-                            ->whereIn('customers.status_id', array(1,4,28))
-                            ->where('actions.created_at', ">=", $last_date)
-                            ->select(DB::raw('customers.id, customers.name, customers.status_id, customers.created_at, customers.phone, customers.email, customers.source_id, customers.status_id, customers.created_at, actions.created_at as action_created_at'))
-                            ->orderBy('actions.created_at', 'DESC') 
-                            ->get();
-
-
-        //SELECT * FROM customers c LEFT JOIN actions a ON a.customer_id = c.id INNER JOIN action_types aty ON aty.id = a.type_id WHERE aty.outbound = 1 AND c.user_id IS NOT NULL AND c.status_id IN(1,4,28) AND a.created_at <= "2021-04-16" AND c.created_at <= "2021-04-16"
-
-
-        $inactive_customers = Customer::
-                            leftJoin('actions', 'actions.customer_id','customers.id')
-                            ->join('action_types','action_types.id','actions.type_id')
-                            ->where('action_types.outbound', 1)
-                            ->whereNotNull('customers.user_id')
-                            ->whereIn('customers.status_id', array(1,4,28))
-                            ->where('actions.created_at', "<=", "2021-04-16")
-                            ->where('customers.created_at', "<=", "2021-04-16")
-                            ->select(DB::raw('DISTINCT(customers.id), customers.name, customers.status_id, customers.created_at, customers.phone, customers.email, customers.source_id, customers.status_id, customers.created_at, actions.created_at as action_created_at'))
-                            ->orderBy('actions.created_at', 'DESC') 
-                            ->get();
-
-
-        $customers_whith_out_actions  = Customer::
-                        whereNotIn('id', $array_customer_id)
-                        ->whereYear('created_at' ,$year) 
-                        ->whereMonth('created_at' ,$month) 
-                        ->whereNotNull('user_id')
-                        ->orderBy('created_at', 'DESC')
-                        ->paginate(5);
-        return view('actions.pending_actions', compact('model','users', 'action_options','request','customers_whith_actions','new_customers','attended_customers','active_customers', 'inactive_customers','total_pending_action', 'customers_whith_out_actions')); 
+        return view('actions.index', compact('model','users', 'action_options','request',
+                'overdueActions', 'todayActions', 'upcomingActions', 'statuses_options'));
     }
 
+    public function getDates($request){
+        $to_date = Carbon\Carbon::today()->subDays(0); // ayer
+        $from_date = Carbon\Carbon::today()->subDays(3000);
 
-
-
-    public function paginacion(){
-        $customers_id = Action::
-                        rightJoin('customers', 'actions.customer_id', 'customers.id')
-                        ->join('action_types', 'action_types.id', 'actions.type_id')
-                        ->where('action_types.outbound', 1)
-                        ->select(DB::raw('DISTINCT(customers.id)')) 
-                        ->groupBy('customers.id')         
-                        ->get();    
-
-        $array_customer_id = array();
-        foreach ($customers_id as $key => $value) {
-            $array_customer_id[] = $value["id"];
+        if(isset($request->from_date) && ($request->from_date!=null)){
+            
+            
+            $from_date = Carbon\Carbon::createFromFormat('Y-m-d', $request->from_date);
+            $to_date = Carbon\Carbon::createFromFormat('Y-m-d', $request->to_date);
         }
-        $year = date("Y");
-        $month = date("n");
 
-        $customers_whith_out_actions  = Customer::
-                        whereNotIn('id', $array_customer_id)
-                        ->whereYear('created_at' ,$year) 
-                        ->whereMonth('created_at' ,$month) 
-                        ->whereNotNull('user_id')
-                        ->orderBy('created_at', 'DESC')
-                        ->paginate(5);
+        $to_date = $to_date->format('Y-m-d')." 23:59:59";
+        $from_date = $from_date->format('Y-m-d');
 
-        $total_pending_action = $this->getPendingActions();
-        return view('actions.pending_actions.whith_out_actions', compact('customers_whith_out_actions', 'total_pending_action'));
+        return array($from_date, $to_date); 
     }
 
-
-
-
-
-
-
-
-
-
-
-    public function getPendingActions(){
-        $customers_id = Action::
-                        rightJoin('customers', 'actions.customer_id', 'customers.id')
-                        ->join('action_types', 'action_types.id', 'actions.type_id')
-                        ->where('action_types.outbound', 1)
-                        ->select(DB::raw('DISTINCT(customers.id)')) 
-                        ->groupBy('customers.id')         
-                        ->get();    
-        $array_customer_id = array();
-        foreach ($customers_id as $key => $value) {
-            $array_customer_id[] = $value["id"];
-        }
-        $year = date("Y");
-        $month = date("n");
-        $model = Customer::
-                        whereNotIn('id', $array_customer_id)
-                        ->whereYear('created_at' ,$year) 
-                        ->whereMonth('created_at' ,$month) 
-                        ->orderBy('created_at', 'DESC')
-                        ->count();
-
-        if($model<1){
-            $model = 0;
-        }
-        return $model;
-    }
-
-
-	public function filterModel(Request $request){
+    public function filterModel(Request $request){
+        $dates = $this->getDates($request);
         
 //        $model = Customer::wherein('customers.status_id', $statuses)
-        $model = Action::leftJoin("customers", "customers.id", "actions.customer_id")
-            ->where(
+        $model = Action::where(
                 // Búsqueda por...
-                 function ($query) use ($request) {
-                    $dates = $this->getDates($request);
+                 function ($query) use ($request, $dates) {
+                    
                     if(isset($request->from_date)&& ($request->from_date!=null)){
-                        /*
-                        if (isset($request->from_date) && $request->from_date) {
-                            $column = ($request->created_updated === "created") ? 'created_at' : 'updated_at';
-                            $query = $query->whereBetween("customers.$column", $dates);
+                        if(isset($request->user_id)  && ($request->user_id!=null)){
+                            $query = $query->whereBetween('updated_at', $dates);
+                            
                         }
-                        */
-                        if(isset($request->user_id)  && ($request->user_id!=null))
-                            $query->whereBetween('actions.updated_at', $dates);
-                        else
-                            $query->whereBetween('actions.created_at', $dates);
+                        else{
+                            $query = $query->whereBetween('created_at', $dates);
+                            
+                        }
                     }
-                    
-                    if(isset($request->creator_user_id)  && ($request->creator_user_id!=null))
-                        $query->where('actions.creator_user_id', $request->creator_user_id);
-                    /*
                     if(isset($request->user_id)  && ($request->user_id!=null))
-                        $query->where('customers.user_id', $request->user_id);
-                    */
-
-                    //dd($request);
+                        $query = $query->where('creator_user_id', $request->user_id);
                     if(isset($request->type_id)  && ($request->type_id!=null))
-                        $query->where('actions.type_id', $request->type_id);
+                        $query = $query->where('type_id', $request->type_id);
                     
-                    
+
                 }
                    
 
              )
                 
-            ->orderBy('actions.updated_at','desc')
+            ->orderBy('updated_at','desc')
             ->orderBy('type_id','asc')
-            ->paginate(20);
+            ->paginate(15);;
 
 
         $model->getActualRows = $model->currentPage()*$model->perPage();
 
         return $model;
-    }
-
-    public function getDates($request){
-
-        $to_date = Carbon\Carbon::today()->subDays(2); // ayer
-        $from_date = Carbon\Carbon::today()->subDays(5000);
-        if(isset($request->from_date) && ($request->from_date!=null)){
-            $from_date = Carbon\Carbon::createFromFormat('Y-m-d', $request->from_date);
-            $to_date = Carbon\Carbon::createFromFormat('Y-m-d', $request->to_date);
-        }
-        $to_date = $to_date->format('Y-m-d')." 23:59:59";
-        $from_date = $from_date->format('Y-m-d');
-
-        return array($from_date, $to_date); 
     }
 
     public function edit($id)
@@ -355,18 +216,17 @@ class ActionController extends Controller
     {
         $model = Action::find($id);
         $customer_id = $model->customer_id;
+        $model->updator_user_id = \Auth::id();
+        $model->status_id = 2;
+        $model->save();
+
+        return redirect('customers/'.$customer_id."/show")->with('statustwo', 'La acción <strong>'.$model->name.'</strong> fué eliminado con éxito!');
+
+
+/*
         if ($model->delete()) {
-            return redirect('customers/'.$customer_id."/show")->with('statusone', 'La acción <strong>'.$model->name.'</strong> fué eliminada con éxito!'); 
+            return redirect('customers/'.$customer_id."/show")->with('statustwo', 'La acción <strong>'.$model->name.'</strong> fué eliminado con éxito!'); 
         }
-    }
-
-
-    public function schedule(Request $request){
-        if(Auth::user()){
-            $from_date = date("Y-m-d"). " 00:00:00";
-            $model = Action::where('created_at',">",$from_date)->get();
-            return view('actions.calendar.schedule', compact('model'));
-        }
-        return redirect("/");
+        */
     }
 }

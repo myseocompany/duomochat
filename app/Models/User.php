@@ -234,4 +234,12 @@ class User extends Authenticatable
             Array($from_date->format('Y-m-d'), $to_date->addHours(23)->addMinutes(59)->addSeconds(59)->format('Y-m-d H:i:s'));
         return $date_array;
     }
+
+    public function getTotalPendingActions()
+{
+    return \App\Models\Action::where('creator_user_id', $this->id)
+        ->where('status_id', 1) // ajusta el ID del estado 'pendiente' según tu lógica
+        ->count();
+}
+
 }
