@@ -42,11 +42,15 @@
       </a>
     </p>
 
-    <p class="text-sm"><span class="text-gray-500 uppercase text-xs font-semibold">Origen</span><br>
-    
-      <span class="underline text-blue-600">{{ $model->source->name ?? 'N/A' }}</span>
-       <span class="underline text-blue-600">{{ $model->src ?? 'N/A' }}</span>
+    @php
+      $Source_name = $model->source->name ?? $model->src ?? 'N/A';
+    @endphp
+
+    <p class="text-sm">
+      <span class="text-gray-500 uppercase text-xs font-semibold">Origen</span><br>
+      <span class="underline text-blue-600">{{ $Source_name }}</span>
     </p>
+
 
     <p class="text-sm"><span class="text-gray-500 uppercase text-xs font-semibold">Proyecto</span><br>
       <span class="underline text-blue-600">{{ $model->project->name ?? 'N/A' }}</span>
@@ -73,7 +77,7 @@
     {{-- Editar --}}
     <a href="/customers/{{ $model->id }}/edit"
       class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100">
-      <i class="fa fa-pen-to-square text-gray-600"></i> <span>Editar</span>
+      <i class="fa fa-pencil text-gray-600"></i> <span>Editar</span>
     </a>
 
     {{-- Asignarme --}}
