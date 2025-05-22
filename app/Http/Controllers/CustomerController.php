@@ -150,7 +150,7 @@ class CustomerController extends Controller
         //$model = $this->getModel($request, $statuses, 1, 500000);
         $model = $this->customerService->filterCustomers($request, $statuses, 1, false, 500000);
 
-
+        dd();
         $unsubscribedPhoneNumbers = CustomerUnsubscribe::pluck('phone')->toArray();
 
         // Filtra los clientes que no están en la lista de desuscripción
