@@ -61,11 +61,11 @@
 
       <div class="col-sm-3">
         <div class="form-group">
-          <label for="customers_statuses">Estado:</label>
-          <select name="status_id" id="status_id" class="form-control">
+          <label for="font_customers">Origen:</label>
+          <select name="source_id" id="source_id" class="form-control">
             <option value="">Seleccione...</option>
-            @foreach ($customer_statuses as $item)
-            <option value="{{$item->id}}" @if($item->id==$model->status_id)selected="selected" @endif>{{$item->name}}</option>
+            @foreach ($customer_sources as $item)
+            <option value="{{$item->id}}" @if($item->id==$model->source_id)selected="selected" @endif>{{$item->name}}</option>
             @endforeach
           </select>
         </div>
@@ -73,11 +73,27 @@
 
       <div class="col-sm-3">
         <div class="form-group">
-          <label for="font_customers">Calificación:</label>
-          <select name="scoring" id="scoring" class="form-control">
+          <label for="project_id">Proyecto:</label>
+          <select name="project_id" id="project_id" class="form-control">
+            <option value="">Seleccione...</option>
+            @foreach ($projects as $item)
+              <option value="{{ $item->id }}" {{ (isset($model) && $model->project_id == $item->id) ? 'selected' : '' }}>
+                {{ $item->name }}
+              </option>
+            @endforeach
+          </select>
+        </div>
+      </div>
 
-            @for ($i=0; $i<=3; $i++) <option value="{{$i}}" @if($i==$model->scoring)selected="selected" @endif>{{$i}}</option>
-              @endfor
+
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label for="customers_statuses">Estado:</label>
+          <select name="status_id" id="status_id" class="form-control">
+            <option value="">Seleccione...</option>
+            @foreach ($customer_statuses as $item)
+            <option value="{{$item->id}}" @if($item->id==$model->status_id)selected="selected" @endif>{{$item->name}}</option>
+            @endforeach
           </select>
         </div>
       </div>
@@ -125,7 +141,7 @@
       </div>
       <div class="col-sm-3">
         <div class="form-group">
-          <label for="contact_position">Cargo:</label>
+          <label for="contact_position">Parentesco:</label>
           <input type="text" class="form-control" id="contact_position" name="contact_position" value="{{$model->contact_position}}">
         </div>
       </div>
@@ -180,23 +196,6 @@
           <input type="text" class="form-control" id="position" value="{{$model->position}}" name="position" placeholder="Cargo..">
         </div>
       </div>
-
-
-
-
-
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label for="font_customers">Fuente:</label>
-          <select name="source_id" id="source_id" class="form-control">
-            <option value="">Seleccione...</option>
-            @foreach ($customer_sources as $item)
-            <option value="{{$item->id}}" @if($item->id==$model->source_id)selected="selected" @endif>{{$item->name}}</option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-      
 
       <div class="col-sm-3">
         <div class="form-group">

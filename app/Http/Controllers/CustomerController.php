@@ -930,25 +930,39 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+   public function show(Request $request, $id)
     {
+        $model = Customer::with(['project', 'status', 'user', 'source'])->find($id);
 
-        $model = Customer::find($id);
-        //dd($id);
-        $actions = Action::where('customer_id', '=', $id)->orderby("created_at", "DESC")->get();
-        //$actions = NULL;
+        $actions = Action::where('customer_id', '=', $id)
+            ->orderBy("created_at", "DESC")
+            ->get();
+
         $action_options = ActionType::orderBy("weight", "ASC")->get();
         $histories = CustomerHistory::where('customer_id', '=', $id)->get();
         $email_options = Email::all();
-        $statuses_options = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
+        $statuses_options = CustomerStatus::orderBy("stage_id", "ASC")
+            ->orderBy("weight", "ASC")
+            ->get();
+
         $actual = true;
         $today = Carbon\Carbon::now();
 
-        //$pending_action = Action::find($request->pending_action_id);
-        $pending_action = NULL;
+        $pending_action = null;
 
-        return view('customers.show', compact('model', 'histories', 'actions', 'action_options', 'email_options', 'statuses_options', 'actual', 'today', 'pending_action'));
+        return view('customers.show', compact(
+            'model',
+            'histories',
+            'actions',
+            'action_options',
+            'email_options',
+            'statuses_options',
+            'actual',
+            'today',
+            'pending_action'
+        ));
     }
+
 
     /**
      * Show the form for editing the specified resource.

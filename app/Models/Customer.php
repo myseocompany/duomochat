@@ -429,4 +429,10 @@ class Customer extends Authenticatable
             ->first();
     }
 
+    public function project()
+{
+    return $this->belongsTo(\App\Models\Project::class, 'project_id', 'id');
+}
+
+
 }

@@ -106,39 +106,58 @@
   </div>
 
 {{-- Contacto alternativo --}}
-@if($model->contact_name || $model->contact_email || $model->contact_phone2)
+@if($model->contact_name || $model->contact_email || $model->contact_phone2 || $model->contact_position)
   <div class="mt-6 border-t pt-4 text-left">
     <h4 class="text-sm font-semibold text-gray-700 mb-2">Contacto alternativo</h4>
 
-    <div class="space-y-1 text-sm text-gray-600">
+    <div class="space-y-2 text-sm text-gray-600">
+      
       @if($model->contact_name)
-      <p><span class="font-medium text-gray-800">Nombre:</span> {{ $model->contact_name }}</p>
+      <div class="flex justify-between items-center">
+        <span><span class="font-medium text-gray-800">Nombre:</span> {{ $model->contact_name }}</span>
+      </div>
       @endif
 
       @if($model->contact_email)
-      <p class="flex items-center gap-2">
-        <span class="font-medium text-gray-800">Email:</span> {{ $model->contact_email }}
-        <button onclick="navigator.clipboard.writeText('{{ $model->contact_email }}')" class="text-gray-400 hover:text-gray-600">
+      <div class="flex justify-between items-center">
+        <span><span class="font-medium text-gray-800">Email:</span> {{ $model->contact_email }}</span>
+        <button onclick="navigator.clipboard.writeText('{{ $model->contact_email }}')" class="text-gray-400 hover:text-gray-600" title="Copiar email">
           <i class="fa fa-copy"></i>
         </button>
-      </p>
+      </div>
+      @endif
+
+      @if($model->contact_position)
+      <div class="flex justify-between items-center">
+        <span><span class="font-medium text-gray-800">Parentesco:</span> {{ $model->contact_position }}</span>
+        <button onclick="navigator.clipboard.writeText('{{ $model->contact_position }}')" class="text-gray-400 hover:text-gray-600" title="Copiar parentesco">
+          <i class="fa fa-copy"></i>
+        </button>
+      </div>
       @endif
 
       @if($model->contact_phone2)
-      <p class="flex items-center gap-2">
-        <span class="font-medium text-gray-800">Teléfono:</span> 
-        <span class="bg-emerald-100 text-emerald-700 font-mono px-2 py-0.5 rounded">{{ $model->contact_phone2 }}</span>
-        <button onclick="navigator.clipboard.writeText('{{ $model->contact_phone2 }}')" class="text-gray-400 hover:text-gray-600">
-          <i class="fa fa-copy"></i>
-        </button>
-        <a href="https://wa.me/{{ clearWP($model->contact_phone2) }}" target="_blank" class="text-green-500 hover:text-green-700">
-          <i class="fa fa-whatsapp"></i>
-        </a>
-      </p>
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="font-medium text-gray-800">Teléfono:</span> 
+          <span class="bg-emerald-100 text-emerald-700 font-mono px-2 py-0.5 rounded">{{ $model->contact_phone2 }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="navigator.clipboard.writeText('{{ $model->contact_phone2 }}')" class="text-gray-400 hover:text-gray-600" title="Copiar teléfono">
+            <i class="fa fa-copy"></i>
+          </button>
+          <a href="https://wa.me/{{ clearWP($model->contact_phone2) }}" target="_blank" class="text-green-500 hover:text-green-700" title="WhatsApp">
+            <i class="fa fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
       @endif
+
     </div>
   </div>
 @endif
+
+
 
 
 </div>
