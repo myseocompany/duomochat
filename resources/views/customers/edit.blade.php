@@ -103,6 +103,14 @@
 
   </fieldset>
 
+  @if(isset($meta_fields) && count($meta_fields))
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border">Características del cliente</legend>
+      <div class="row">
+        @include('customers.components.edit_meta_fields')
+      </div>
+    </fieldset>
+  @endif
 
   {{-- Fin datos de contacto --}}
   <fieldset class="scheduler-border">
@@ -214,6 +222,9 @@
 
     </div>
   </fieldset>
+
+
+
   <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
 

@@ -85,6 +85,16 @@
 
 </fieldset>
 
+  @if(isset($meta_fields) && count($meta_fields))
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border">Características del cliente</legend>
+      <div class="row">
+        @include('customers.components.create_meta_fields')
+      </div>
+    </fieldset>
+  @endif
+
+
   {{-- Fin datos de contacto --}}
   <fieldset class="scheduler-border">
     <legend class="scheduler-border">Datos Adicionales:</legend>

@@ -5,12 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomerMetaData extends Model{
+
 	protected $table = "customer_meta_datas";
+	
+	protected $fillable = [
+		'customer_id',
+		'master_meta_data_id',
+		'value',
+	];
 
 	public static function getOptions($id){
 		return CustomerMetaData::where('parent_id', $id)->get();
 	}
 
+	public function field()
+{
+        return $this->belongsTo(MasterMetaData::class, 'master_meta_data_id');
+    }
 
 	
     function CustomerMetaDataChildren(){
@@ -19,6 +30,7 @@ class CustomerMetaData extends Model{
      	//return CustomerMetaData::where('parent_id',$this->id)->get();
 
      }
+
 	 function isMultiple(){
 		$res=true;
 		if($this->type_id==1 || $this->type_id==4){
@@ -54,6 +66,7 @@ class CustomerMetaData extends Model{
 		}
 		return $str;
 	}
+
 	public function getAnswer($pid, $project_meta_data){
 	   $model = CustomerMeta::where("project_id", $pid)
 		   ->where("meta_data_id", $project_meta_data->id)->first();

@@ -1,5 +1,5 @@
 <?php
-#PTP
+#DUOMO
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -33,6 +33,8 @@ use App\Models\CustomerMetadataSemantic;
 use App\Models\Audience;
 use App\Models\AudienceCustomer;
 use App\Services\CustomerService;
+use App\Services\CustomerMetaDataService;
+
 
 class CustomerController extends Controller
 {
@@ -724,13 +726,15 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(CustomerMetaDataService $metaService)
     {
         $users = User::all();
         $customers_statuses = CustomerStatus::orderBy('stage_id', 'ASC')->orderBy('weight', 'ASC')->get();
         $customer_sources = CustomerSource::all();
         $projects = Project::all();
-        return view('customers.create', compact('customers_statuses', 'users', 'customer_sources', 'projects'));
+        $meta_fields = $metaService->getFieldsForCustomer(1, null); // null porque aún no hay cliente
+
+        return view('customers.create', compact('customers_statuses', 'users', 'customer_sources', 'projects', 'meta_fields'));
     }
 
 
@@ -903,6 +907,8 @@ class CustomerController extends Controller
             //$this->sendWelcomeMail($model);
 
             //$this->sendMail(1, $model);
+            $this->storeOrUpdateCustomerMetaData($request, $model->id);
+
             return redirect('customers/' . $model->id . '/show')->with('status', 'El Cliente <strong>' . $model->name . '</strong> fué añadido con éxito!');
         }
         dd($model);
@@ -924,15 +930,51 @@ class CustomerController extends Controller
         else
             return redirect('/customers/' . $similar[0]->id . '/show');
     }
+
+
+
+    private function storeOrUpdateCustomerMetaData(Request $request, $customerId)
+    {
+        // Elimina los anteriores para reemplazarlos completamente
+        CustomerMetaData::where('customer_id', $customerId)->delete();
+
+        foreach ($request->all() as $key => $value) {
+            if (str_starts_with($key, 'meta_')) {
+                $metaId = str_replace('meta_', '', $key);
+
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        CustomerMetaData::create([
+                            'customer_id' => $customerId,
+                            'master_meta_data_id' => $metaId,
+                            'value' => $v,
+                        ]);
+                    }
+                } else {
+                    CustomerMetaData::create([
+                        'customer_id' => $customerId,
+                        'master_meta_data_id' => $metaId,
+                        'value' => $value,
+                    ]);
+                }
+            }
+        }
+    }
+
+
+
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   public function show(Request $request, $id)
+   public function show(Request $request, $id, CustomerMetaDataService $metaService)
     {
         $model = Customer::with(['project', 'status', 'user', 'source'])->find($id);
+
+        $meta_fields = $metaService->getFieldsForCustomer(1, $model->id); // 1 = master padre
+
 
         $actions = Action::where('customer_id', '=', $id)
             ->orderBy("created_at", "DESC")
@@ -959,7 +1001,8 @@ class CustomerController extends Controller
             'statuses_options',
             'actual',
             'today',
-            'pending_action'
+            'pending_action',
+            'meta_fields'
         ));
     }
 
@@ -970,7 +1013,7 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, CustomerMetaDataService $metaService)
     {
         $model = Customer::find($id);
         $customer_statuses = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
@@ -979,9 +1022,9 @@ class CustomerController extends Controller
 
         $projects = Project::all();
 
+        $meta_fields = $metaService->getFieldsForCustomer(1, $model->id); // 1 = master padre
 
-
-        return view('customers.edit', compact('model', 'customer_statuses',  'users', 'customer_sources', 'projects'));
+        return view('customers.edit', compact('model', 'customer_statuses',  'users', 'customer_sources', 'projects', 'meta_fields'));
     }
 
 
@@ -1067,6 +1110,7 @@ class CustomerController extends Controller
 
 
         if ($model->save()) {
+            $this->updateDynamicMetaData($request, $model->id);
             /*
             $this->updateMetaDataFromSelect($model, 1, $request->meta_house_mates_id);
             $this->updateMetaDataFromSelect($model, 2, $request->meta_funding_source_id);
@@ -1076,6 +1120,26 @@ class CustomerController extends Controller
 
 
             return redirect('/customers/' . $id . '/show')->with('statusone', 'El Cliente <strong>' . $model->name . '</strong> fué modificado con éxito!');
+        }
+    }
+
+
+    public function updateDynamicMetaData(Request $request, $customer_id)
+    {
+        foreach ($request->all() as $key => $value) {
+            if (str_starts_with($key, 'meta_')) {
+                $meta_id = str_replace('meta_', '', $key);
+
+                \App\Models\CustomerMetaData::updateOrCreate(
+                    [
+                        'customer_id' => $customer_id,
+                        'master_meta_data_id' => $meta_id,
+                    ],
+                    [
+                        'value' => is_array($value) ? json_encode($value) : $value,
+                    ]
+                );
+            }
         }
     }
 
@@ -1657,4 +1721,6 @@ class CustomerController extends Controller
         }
         return redirect()->back();
     }
+
+
 }

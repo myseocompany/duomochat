@@ -5,11 +5,10 @@
     @if($model->notes)
     <div class="text-sm text-gray-800">{{ $model->notes }}</div>
     @endif
-
     <div class="text-sm text-gray-700">
-      <p><strong>Presupuesto:</strong> {{ $model->budget ?? 'N/A' }}</p>
-      <p><strong>Habitaciones:</strong> {{ $model->rooms ?? 'N/A' }}</p>
-      <p><strong>Proyecto:</strong> {{ $model->project->name ?? 'N/A' }}</p>
+      @foreach($meta_fields as $field)
+        <p><strong>{{ $field['label'] }}:</strong> {{ $field['value'] }}</p>
+      @endforeach
     </div>
 
     @if(isset($pending_actions) && $pending_actions->count())
