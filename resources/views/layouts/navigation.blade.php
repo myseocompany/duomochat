@@ -16,8 +16,11 @@
                     @if(Auth::user()->role_id == 1)
                         <a href="/chats" class="text-gray-700 hover:text-blue-600 font-medium">Inbox</a>
                         <a href="/customers/phase/1" class="text-gray-700 hover:text-blue-600 font-medium">Contactos</a>
+                        <!--
                         <a href="/orders" class="text-gray-700 hover:text-blue-600 font-medium">Órdenes</a>
+-->                     <a href="/actions" class="text-gray-700 hover:text-blue-600 font-medium">Acciones</a>
                         <a href="/products" class="text-gray-700 hover:text-blue-600 font-medium">Productos</a>
+                        
                         <a href="https://panel.smartchatapp.online/" class="text-gray-700 hover:text-blue-600 font-medium">Bot</a>
 
                         <!-- Dropdowns -->
@@ -114,7 +117,11 @@
             @if(Auth::user()->role_id == 1)
                 <a href="/chats" class="block py-2 text-gray-700 hover:text-blue-600">Inbox</a>
                 <a href="/customers/phase/1" class="block py-2 text-gray-700 hover:text-blue-600">Contactos</a>
+                <!--
                 <a href="/orders" class="block py-2 text-gray-700 hover:text-blue-600">Órdenes</a>
+                -->
+                <a href="/actions" class="block py-2 text-gray-700 hover:text-blue-600">Acciones</a>
+
                 <a href="/products" class="block py-2 text-gray-700 hover:text-blue-600">Productos</a>
                 <a href="/audiences/1/customers" class="block py-2 text-gray-700 hover:text-blue-600">Benevento</a>
                 <a href="/audiences/2/customers" class="block py-2 text-gray-700 hover:text-blue-600">Emmanuel</a>
