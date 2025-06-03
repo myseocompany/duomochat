@@ -122,8 +122,11 @@ class ActionController extends Controller
         $overdueActions = $this->actionService->filterModel($overdueRequest, true);
         $todayActions = $this->actionService->filterModel($todayRequest, true);
         $upcomingActions = $this->actionService->filterModel($upcomingRequest, true);
-        $model = $this->actionService->filterModel($request, false);
 
+        if($request->filled('pending'))
+            $model = $this->actionService->filterModel($request, true);
+        else    
+            $model = $this->actionService->filterModel($request, false);
         
         $users = User::where('status_id' , '=' , 1)->get();
         $action_options = ActionType::all();
@@ -131,7 +134,8 @@ class ActionController extends Controller
         
 
         return view('actions.index', compact('model','users', 'action_options','request',
-                'overdueActions', 'todayActions', 'upcomingActions', 'statuses_options'));
+                'overdueActions', 'todayActions', 'upcomingActions', 
+                'statuses_options'));
     }
 
     public function getDates($request){
@@ -228,5 +232,20 @@ class ActionController extends Controller
             return redirect('customers/'.$customer_id."/show")->with('statustwo', 'La acción <strong>'.$model->name.'</strong> fué eliminado con éxito!'); 
         }
         */
+    }
+
+    public function complete(Request $request, Action $action)
+    {
+        $request->validate([
+            'delivery_date' => 'required|date',
+        ]);
+
+        $action->delivery_date = $request->input('delivery_date');
+        $action->save();
+
+        return response()->json([
+            'message' => 'Acción completada',
+            'delivery_date' => $action->delivery_date,
+        ]);
     }
 }

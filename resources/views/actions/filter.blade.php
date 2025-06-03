@@ -1,6 +1,6 @@
-<form action="/actions/" method="GET" id="filter_form" class="form-inline">
+<form action="/actions/" method="GET" id="filter_form" class="flex flex-col gap-4">
     <div class="form-group">
-        <select name="filter" class="custom-select" id="filter" onchange="update()">
+        <select name="filter" class="custom-select w-full" id="filter" onchange="update()">
             <option value="">Seleccione tiempo</option>
             <option value="0" @if ($request->filter == "0") selected="selected" @endif>hoy</option>
             <option value="-1" @if ($request->filter == "-1") selected="selected" @endif>ayer</option>
@@ -14,60 +14,50 @@
     </div>
 
     <div class="form-group">
-        <input class="form-control input-date" type="date" id="from_date" name="from_date" onchange="cleanFilter()" value="{{$request->from_date}}">
+        <input class="form-control input-date w-full" type="date" id="from_date" name="from_date" value="{{ $request->from_date }}">
     </div>
 
     <div class="form-group">
-        <input class="form-control input-date" type="date" id="to_date" name="to_date" onchange="cleanFilter()" value="{{$request->to_date}}">
+        <input class="form-control input-date w-full" type="date" id="to_date" name="to_date" value="{{ $request->to_date }}">
+    </div>
+
+    <div class="form-group flex items-center gap-2">
+        <input value="true" @if(isset($request->pending) && ($request->pending)) checked @endif class="form-check-input" type="checkbox" id="pending" name="pending">
+        <label for="pending" class="form-check-label">Pendientes</label>
     </div>
 
     <div class="form-group">
-        <input value="1" @if(isset($request->pending) && ($request->pending==1)) checked @endif class="form-check-input" type="checkbox" id="pending" name="pending" onchange="submit()">
-        <label for="pending" class="form-check-label ml-2">Pendientes</label>
-    </div>
-
-    <div class="form-group">
-        <select name="type_id" class="custom-select" id="type_id" onchange="submit();">
+        <select name="type_id" class="custom-select w-full" id="type_id">
             <option value="">Tipo acción...</option>
             @foreach($action_options as $item)
-                <option value="{{$item->id}}" @if ($request->type_id == $item->id) selected="selected" @endif>{{ $item->name }}</option>
+                <option value="{{ $item->id }}" @if ($request->type_id == $item->id) selected="selected" @endif>{{ $item->name }}</option>
             @endforeach
         </select>
     </div>
 
     <div class="form-group">
-        <select name="user_id" class="custom-select" id="user_id" onchange="submit();">
-            <option value="">Seleccione un usuario</option>
+        <select name="user_id" class="custom-select w-full" id="user_id">
+            <option value="">Todos los usuarios</option>
             @foreach($users as $user)
-                <option value="{{$user->id}}" @if ((isset($request->user_id)) && ($request->user_id != "") && ($request->user_id == $user->id)) selected="selected" @endif>{{$user->name}}</option>
+                <option value="{{ $user->id }}" @if ($request->user_id == $user->id) selected="selected" @endif>{{ $user->name }}</option>
             @endforeach
         </select>
     </div>
 
     <div class="form-group">
-        <input class="form-control" type="text" placeholder="Busca o escribe" aria-label="Cliente" id="action_search" name="action_search" value="{{ $request->get('action_search') }}">
+        <input class="form-control w-full" type="text" placeholder="Busca o escribe" aria-label="Cliente" id="action_search" name="action_search" value="{{ $request->get('action_search') }}">
     </div>
 
     <div class="form-group">
-        <input type="submit" class="btn btn-sm btn-primary" value="Filtrar">
+        <input type="submit" class="btn btn-sm btn-primary w-full" value="Filtrar">
     </div>
 </form>
 
-
-    <style>
-    .input-date {
-        max-width: 150px;
-    }
-    .custom-select, .form-control {
-        max-width: 200px;
-    }
-    #action-search {
-        max-width: 250px;
-    }
-    #filter_form .form-group {
-        margin-bottom: 0;
-    }
-    #filter_form .form-group + .form-group {
-        margin-left: 10px;
-    }
+<style>
+.input-date {
+    max-width: 200px;
+}
+.custom-select, .form-control {
+    max-width: 220px;
+}
 </style>

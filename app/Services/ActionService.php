@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Customer;
 use App\CustomerStatus;
 use App\Models\Action;
+use Illuminate\Support\Facades\Log;
 
 use Carbon;
 use DB;
@@ -13,53 +14,71 @@ use DB;
 
 class ActionService{
 
-    public function filterModel(Request $request, $useDueDate = false)
+public function filterModel(Request $request, $useDueDate = false)
 {
+    Log::info('filterModel called', $request->all()); // 🚩 Log de los parámetros del Request
+
     $model = Action::where(function ($query) use ($request, $useDueDate) {
-        // Filtro de acciones pendientes si está especificado en el request
+        $dateColumn = $useDueDate ? 'due_date' : 'created_at';
+
+        Log::info('Filtering using date column: ' . $dateColumn);
+
         if ($request->filled('pending')) {
+            Log::info('Filtering pending actions');
             $query->whereNotNull('due_date')->whereNull('delivery_date');
         }
 
-        // Determinar la columna de fecha a usar
-        $dateColumn = $useDueDate ? 'due_date' : 'created_at';
-        
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $fromDate = Carbon\Carbon::parse($request->from_date)->startOfDay();
-            $toDate = Carbon\Carbon::parse($request->to_date)->endOfDay(); // Ajustar la hora final del día
-            $query->whereBetween($dateColumn, [$fromDate, $toDate]);
-        } elseif ($request->filled('from_date')) {
-            $fromDate = Carbon\Carbon::parse($request->from_date)->startOfDay();
-            $query->where($dateColumn, '>=', $fromDate);
-        } elseif ($request->filled('to_date')) {
-            $toDate = Carbon\Carbon::parse($request->to_date)->endOfDay(); // Ajustar la hora final del día
-            $query->where($dateColumn, '<=', $toDate);
+        if ($request->filled('range_type')) {
+            $now = Carbon\Carbon::now();
+            Log::info('Filtering with range_type: ' . $request->range_type);
+
+            if ($request->range_type == 'overdue') {
+                $query->where($dateColumn, '<', $now->startOfDay());
+                Log::info('Overdue filter: due_date < ' . $now->startOfDay());
+            } elseif ($request->range_type == 'today') {
+                $query->whereDate($dateColumn, $now->toDateString());
+                Log::info('Today filter: due_date = ' . $now->toDateString());
+            } elseif ($request->range_type == 'upcoming') {
+                $query->where($dateColumn, '>', $now->endOfDay());
+                Log::info('Upcoming filter: due_date > ' . $now->endOfDay());
+            }
+        } else {
+
+            if ($request->filled('from_date') && $request->filled('to_date')) {
+                $fromDate = Carbon\Carbon::parse($request->from_date)->startOfDay();
+                $toDate = Carbon\Carbon::parse($request->to_date)->endOfDay(); // Correcto
+                $query->whereBetween($dateColumn, [$fromDate, $toDate]);
+            }
+
         }
 
         if ($request->filled('user_id')) {
             $query->where('creator_user_id', $request->user_id);
+            Log::info('Filtering by user_id: ' . $request->user_id);
         }
         if ($request->filled('type_id')) {
             $query->where('type_id', $request->type_id);
+            Log::info('Filtering by type_id: ' . $request->type_id);
         }
 
-        // Filtro de búsqueda general
         if ($request->filled('action_search')) {
-            $query->where(function ($subQuery) use ($request) {
-                $searchTerm = '%' . $request->action_search . '%';
+            $searchTerm = '%' . $request->action_search . '%';
+            $query->where(function ($subQuery) use ($searchTerm) {
                 $subQuery->where('note', 'like', $searchTerm);
-                         // Agrega más columnas según sea necesario
             });
+            Log::info('Filtering by search term: ' . $searchTerm);
         }
     })
-    ->orderBy('updated_at', 'desc')
-    ->orderBy('type_id', 'asc')
+    ->orderBy('due_date', 'asc')
     ->paginate(15);
+
+    Log::info('Total results: ' . $model->total()); // 🚩 Log de cuántos resultados devolvió
 
     $model->getActualRows = $model->currentPage() * $model->perPage();
 
     return $model;
 }
+
 
     
 
@@ -91,30 +110,32 @@ class ActionService{
     public function createFilteredRequest($originalRequest, $dateRangeType) {
         $filteredRequest = clone $originalRequest;
         $now = Carbon\Carbon::now();
-    
+
         switch ($dateRangeType) {
             case 'overdue':
-                $fromDate = Carbon\Carbon::createFromTimestamp(0); // 1970-01-01 00:00:00
-                $toDate = $now->copy()->subSecond(); // Justo un segundo antes de ahora para incluir todo el día hasta este momento
+                $fromDate = Carbon\Carbon::createFromTimestamp(0); // desde el inicio de los tiempos
+                $toDate = $now->copy()->startOfDay()->subSecond(); // hasta ayer
                 break;
             case 'today':
-                $fromDate = $now->copy()->startOfDay(); // El inicio del día de hoy
-                $toDate = $now->copy()->endOfDay(); // El final del día de hoy
+                $fromDate = $now->copy()->startOfDay();
+                $toDate = $now->copy()->endOfDay();
                 break;
             case 'upcoming':
-                $fromDate = $now->copy()->addDay()->startOfDay(); // El inicio del día de mañana
-                $toDate = $now->copy()->addWeek(); // Una semana a partir de ahora
+                $fromDate = $now->copy()->addDay()->startOfDay(); // mañana
+                $toDate = $now->copy()->addWeeks(1)->endOfDay(); // hasta 1 semana
                 break;
             default:
                 throw new \Exception('Invalid date range type');
         }
-    
+
         $filteredRequest->merge([
             'pending' => true,
-            'from_date' => $fromDate->toDateTimeString(),
-            'to_date' => $toDate->toDateTimeString(),
+            'from_date' => $fromDate->toDateString(),
+            'to_date' => $toDate->toDateString(),
+            'range_type' => $dateRangeType // 👈 Nuevo
         ]);
-    
+
         return $filteredRequest;
     }
+
 }

@@ -10,7 +10,15 @@ use Auth;
 class Action extends Model
 {
     
-
+    protected $fillable = [
+        'note',
+        'creator_user_id',
+        'customer_id',
+        'type_id',
+        'due_date',
+        'delivery_date',
+        'status_id'
+    ];
     public function type(){
         return $this->belongsTo('App\Models\ActionType');
     }
@@ -91,13 +99,16 @@ class Action extends Model
         $model->save();
     }
 
-    public function isPending() {
-        $isPending = false;
-        if (!is_null($this->due_date) && is_null($this->delivery_date)) {
-            $isPending = true;
+        public function isPending() {
+            return !is_null($this->due_date) && is_null($this->delivery_date);
         }
-        return $isPending;
-    }
-    
+
+        public function wasNeverPending() {
+            return is_null($this->due_date) && is_null($this->delivery_date);
+        }
+
+        public function shouldShow() {
+            return $this->wasNeverPending() || $this->isPending();
+        }
 
 }

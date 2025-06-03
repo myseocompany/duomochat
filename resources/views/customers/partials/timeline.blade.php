@@ -1,11 +1,12 @@
-<div class="bg-white shadow rounded-xl p-4">
-  <h3 class="text-lg font-semibold mb-4">Línea de tiempo</h3>
-  <ul class="space-y-4">
+<div class="bg-white shadow rounded-xl p-6">
+  <h3 class="text-xl font-semibold mb-6">Línea de tiempo</h3>
+  <ul class="space-y-6">
     @foreach($actions as $action)
+      @if($action->shouldShow())
       <li 
-        class="border-l-4 border-blue-500 pl-4 flex justify-between items-start" 
         x-data="{ 
-          completed: {{ $action->completed ? 'true' : 'false' }}, 
+          completed: {{ $action->delivery_date ? 'true' : 'false' }},
+          show: true,
           completeAction() {
             fetch(`/actions/{{ $action->id }}/complete`, {
               method: 'PATCH',
@@ -14,6 +15,9 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
               },
+              body: JSON.stringify({
+                delivery_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+              })
             })
             .then(response => {
               if (!response.ok) {
@@ -23,31 +27,49 @@
             })
             .then(data => {
               this.completed = true;
+              setTimeout(() => { this.show = false }, 300);
             })
             .catch(error => {
               alert(error.message);
             });
           }
         }"
+        x-show="show"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="opacity-100 transform scale-100"
+        x-transition:leave-end="opacity-0 transform scale-90"
+        class="relative flex items-start justify-between border-l-4 border-blue-500 pl-4"
       >
-        <!-- Left Side: Action Details -->
+        <!-- Action content -->
         <div>
-          <div class="text-sm text-gray-500">
-            {{ $action->created_at->format('d M Y H:i') }}
-            @if($action->creator)
-              — <span class="italic text-gray-600">{{ $action->creator->name }}</span>
-            @else
-              — <span class="italic text-gray-400">Automático</span>
-            @endif
+          <!-- Due date if pending -->
+          @if($action->isPending())
+            <div class="text-xs text-red-600 font-semibold mb-1">
+              ⏰ Programado para: {{ \Carbon\Carbon::parse($action->due_date)->format('d M Y H:i') }}
+            </div>
+          @endif
+
+          <!-- Main note -->
+          <div class="text-lg font-bold text-gray-800 mb-1">
+            {{ $action->note }}
           </div>
-          <div class="font-semibold">
-            <span x-text="completed ? '{{ $action->type->name ?? 'Acción' }} (Completada)' : '{{ $action->type->name ?? 'Acción' }}'"></span>
+
+          <!-- Type of action -->
+          <div class="text-sm text-gray-600 mb-1">
+            {{ $action->type->name ?? 'Acción' }}
           </div>
-          <p class="text-gray-700 text-sm">{{ $action->note }}</p>
+
+          <!-- Metadata: Creator and Created Date -->
+          <div class="text-xs text-gray-400 mt-2">
+            Creado por 
+            <span class="italic">{{ $action->creator->name ?? 'Automático' }}</span> 
+            el {{ $action->created_at->format('d M Y H:i') }}
+          </div>
         </div>
 
-        <!-- Right Side: AJAX Checkbox -->
-        <div class="flex items-center">
+        <!-- Completion Checkbox -->
+        @if($action->isPending())
+        <div class="flex items-center ml-4">
           <input 
             type="checkbox" 
             :checked="completed"
@@ -56,8 +78,9 @@
             :disabled="completed"
           >
         </div>
+        @endif
       </li>
+      @endif
     @endforeach
   </ul>
 </div>
-
