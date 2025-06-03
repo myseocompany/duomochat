@@ -174,7 +174,8 @@
               <input type="text" class="form-control" id="document" name="document" placeholder="Doc Ej: C.c/DNI...">
             </div>
           </div>
-
+<!-- Empresa donde trabaja, telefono empresa
+-->
 <!--
         <div class="col-sm-12">
           <div class="form-group">
@@ -190,8 +191,11 @@
   </fieldset>
   {{-- Datos de contacto --}}
   <fieldset class="scheduler-border">
-    <legend class="scheduler-border">Contactos adicionales:</legend>
+    <legend class="scheduler-border">Datos acompañante:</legend>
     <div class="row">
+      <!-- cedula, ocupacion, empresa donde trabaja, valor de la casa, valor de la sepración
+        cuota inicial, cuota final, valor de la cuota, fecha de entrega 
+      -->
           <div class="col-sm-3">
           <div class="form-group">
             <label for="contact_name">Nombre:</label>
