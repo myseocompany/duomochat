@@ -83,6 +83,41 @@
       </div>
     </div>
 !-->
+<div class="col-sm-3">
+          <div class="form-group">
+            <label for="customers_statuses">Estado:</label>
+            <select name="status_id" id="status_id" class="form-control">
+              <option value="">Seleccione...</option>
+              @foreach ($customers_statuses as $item)
+              <option value="{{ $item->id }}">{{  $item->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="font_customers">Proyecto:</label>
+            <select name="project_id" id="project_id" class="form-control">
+              <option value="">Seleccione...</option>
+              @foreach ($projects as $item)
+              <option value="{{ $item->id }}">{{  $item->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="font_customers">Origen:</label>
+            <select name="source_id" id="source_id" class="form-control">
+              <option value="">Seleccione...</option>
+              @foreach ($customer_sources as $item)
+              <option value="{{ $item->id }}">{{  $item->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
 </fieldset>
 
   @if(isset($meta_fields) && count($meta_fields))
@@ -147,41 +182,7 @@
           </div>    
         </div>
 
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="customers_statuses">Estado:</label>
-            <select name="status_id" id="status_id" class="form-control">
-              <option value="">Seleccione...</option>
-              @foreach ($customers_statuses as $item)
-              <option value="{{ $item->id }}">{{  $item->name }}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="font_customers">Proyecto:</label>
-            <select name="project_id" id="project_id" class="form-control">
-              <option value="">Seleccione...</option>
-              @foreach ($projects as $item)
-              <option value="{{ $item->id }}">{{  $item->name }}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
         
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="font_customers">Origen:</label>
-            <select name="source_id" id="source_id" class="form-control">
-              <option value="">Seleccione...</option>
-              @foreach ($customer_sources as $item)
-              <option value="{{ $item->id }}">{{  $item->name }}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
         
         
   </div>
