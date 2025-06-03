@@ -28,7 +28,7 @@ use App\Models\ActionType;
 use Auth;
 use Carbon;
 use App\Models\SendWithData;
-use App\Models\CustomerMetadata;
+use App\Models\CustomerMetaData;
 use App\Models\CustomerMetadataSemantic;
 use App\Models\Audience;
 use App\Models\AudienceCustomer;
