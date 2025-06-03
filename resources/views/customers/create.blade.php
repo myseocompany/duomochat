@@ -18,14 +18,14 @@
               <input type="text" class="form-control" id="name" name="name" placeholder="Nombre..." value="">
             </div>
           </div>
-
+<!--
           <div class="col-sm-12">
             <div class="form-group">
               <label for="document">CC:</label>
               <input type="text" class="form-control" id="document" name="document" placeholder="Doc Ej: C.c/DNI...">
             </div>
           </div>
-
+-->
           <div class="col-sm-12">
            <div class="form-group">
             <label for="phone">Celular:</label>
@@ -54,14 +54,14 @@
             <input type="text" class="form-control" id="refered_by" name="refered_by" placeholder="Referido por...">
           </div>
         </div>
-
+<!--
         <div class="col-sm-12">
           <div class="form-group">
             <label for="document">F. de cumpleaños:</label>
             <input type="date" class="form-control" id="birthday" name="birthday">
           </div>
         </div>
-
+-->
         <div class="col-sm-12">
           <div class="form-group">
             <label for="users">Asignado A:</label>
@@ -73,7 +73,7 @@
             </select>
           </div>
         </div>
-
+<!--
         <div class="col-sm-12">
           <div class="form-group">
             <label for="address">Dirección:</label>
@@ -82,12 +82,12 @@
         </div>
       </div>
     </div>
-
+!-->
 </fieldset>
 
   @if(isset($meta_fields) && count($meta_fields))
     <fieldset class="scheduler-border">
-      <legend class="scheduler-border">Características del cliente</legend>
+      <legend class="scheduler-border">Interés</legend>
       <div class="row">
         @include('customers.components.create_meta_fields')
       </div>
