@@ -18,14 +18,7 @@
               <input type="text" class="form-control" id="name" name="name" placeholder="Nombre..." value="">
             </div>
           </div>
-<!--
-          <div class="col-sm-12">
-            <div class="form-group">
-              <label for="document">CC:</label>
-              <input type="text" class="form-control" id="document" name="document" placeholder="Doc Ej: C.c/DNI...">
-            </div>
-          </div>
--->
+
           <div class="col-sm-12">
            <div class="form-group">
             <label for="phone">Celular:</label>
@@ -54,14 +47,7 @@
             <input type="text" class="form-control" id="refered_by" name="refered_by" placeholder="Referido por...">
           </div>
         </div>
-<!--
-        <div class="col-sm-12">
-          <div class="form-group">
-            <label for="document">F. de cumpleaños:</label>
-            <input type="date" class="form-control" id="birthday" name="birthday">
-          </div>
-        </div>
--->
+
         <div class="col-sm-12">
           <div class="form-group">
             <label for="users">Asignado A:</label>
@@ -73,16 +59,10 @@
             </select>
           </div>
         </div>
-<!--
-        <div class="col-sm-12">
-          <div class="form-group">
-            <label for="address">Dirección:</label>
-            <input type="text" class="form-control" id="address" name="address" placeholder="Dirección...">
-          </div>
-        </div>
+
       </div>
     </div>
-!-->
+
 <div class="col-sm-3">
           <div class="form-group">
             <label for="customers_statuses">Estado:</label>
@@ -141,7 +121,7 @@
 </fieldset>
 
 <fieldset class="scheduler-border">
-  <legend class="scheduler-border">Información del Prospecto:</legend>
+  <legend class="scheduler-border">Hoja de Negocio:</legend>
   <div class="row">
         
         
@@ -177,12 +157,32 @@
         
         <div class="col-sm-3">
           <div class="form-group">
-            <label for="position">Cargo:</label>
+            <label for="position">Ocupación:</label>
             <input type="text" class="form-control" id="position" name="position" placeholder="Cargo..">
           </div>    
         </div>
 
-        
+        <div class="col-sm-12">
+          <div class="form-group">
+            <label for="address">Dirección:</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="Dirección...">
+          </div>
+        </div>
+          <div class="col-sm-12">
+            <div class="form-group">
+              <label for="document">CC:</label>
+              <input type="text" class="form-control" id="document" name="document" placeholder="Doc Ej: C.c/DNI...">
+            </div>
+          </div>
+
+<!--
+        <div class="col-sm-12">
+          <div class="form-group">
+            <label for="document">F. de cumpleaños:</label>
+            <input type="date" class="form-control" id="birthday" name="birthday">
+          </div>
+        </div>
+-->
         
         
   </div>
