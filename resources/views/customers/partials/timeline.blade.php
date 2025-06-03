@@ -4,9 +4,9 @@
     @foreach($actions as $action)
       <li class="border-l-4 border-blue-500 pl-4">
         <div class="text-sm text-gray-500">
-          @if(isset($action->due_date))
+          @if(isset($action->delivery_date))
             Hoy
-          {{ $action->due_date->format('d M Y H:i') }}
+          {{ $action->delivery_date->format('d M Y H:i') }}
           @endif
           @if($action->creator)
             — <span class="italic text-gray-600">{{ $action->creator->name }}</span>
