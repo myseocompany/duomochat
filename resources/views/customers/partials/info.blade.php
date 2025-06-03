@@ -42,19 +42,40 @@
       </a>
     </p>
 
-    @php
-      $Source_name = $model->source->name ?? $model->src ?? 'N/A';
-    @endphp
+<form action="{{ route('customers.update', $model->id) }}" method="POST" id="quickUpdateForm">
+    @csrf
+    @method('POST') {{-- Si tu ruta es POST como en tu router, o usa PUT si usas resourceful --}}
+    
+    <div class="flex flex-col gap-4 mt-4">
 
-    <p class="text-sm">
-      <span class="text-gray-500 uppercase text-xs font-semibold">Origen</span><br>
-      <span class="underline text-blue-600">{{ $Source_name }}</span>
-    </p>
+        {{-- Proyecto --}}
+        <div class="flex items-center gap-2">
+            <label class="font-semibold w-24 text-right">Proyecto:</label>
+            <select name="project_id" onchange="document.getElementById('quickUpdateForm').submit()" class="flex-1 rounded border-gray-300 shadow-sm text-sm">
+                @foreach($projects_options as $project)
+                    <option value="{{ $project->id }}" {{ $model->project_id == $project->id ? 'selected' : '' }}>
+                        {{ $project->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Origen --}}
+        <div class="flex items-center gap-2">
+            <label class="font-semibold w-24 text-right">Origen:</label>
+            <select name="source_id" onchange="document.getElementById('quickUpdateForm').submit()" class="flex-1 rounded border-gray-300 shadow-sm text-sm">
+                @foreach($customer_sources_options as $source)
+                    <option value="{{ $source->id }}" {{ $model->source_id == $source->id ? 'selected' : '' }}>
+                        {{ $source->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+    </div>
+</form>
 
 
-    <p class="text-sm"><span class="text-gray-500 uppercase text-xs font-semibold">Proyecto</span><br>
-      <span class="underline text-blue-600">{{ $model->project->name ?? 'N/A' }}</span>
-    </p>
   </div>
 
   {{-- Botones de acción --}}

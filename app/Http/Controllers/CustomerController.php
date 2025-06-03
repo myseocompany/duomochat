@@ -36,6 +36,7 @@ use App\Services\CustomerService;
 use App\Services\CustomerMetaDataService;
 
 
+
 class CustomerController extends Controller
 {
 
@@ -991,6 +992,10 @@ class CustomerController extends Controller
 
         $pending_action = null;
 
+        $customer_sources_options = CustomerSource::all();
+        $projects_options = Project::all();
+        
+
         return view('customers.show', compact(
             'model',
             'histories',
@@ -1001,7 +1006,9 @@ class CustomerController extends Controller
             'actual',
             'today',
             'pending_action',
-            'meta_fields'
+            'meta_fields',
+            'customer_sources_options',
+            'projects_options'
         ));
     }
 
