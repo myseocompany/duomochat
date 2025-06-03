@@ -76,7 +76,8 @@ Route::middleware('auth')->prefix('customers')->group(function () {
     Route::get('/{customer}/action/updateAjax', [CustomerController::class, 'updateAjaxStatus']);
     Route::get('/phase/{pid}', [CustomerController::class, 'getcustomers']);
     Route::get('/{pid}', [CustomerController::class, 'dragleads']);
-
+    
+    Route::put('/{customer}/update', [CustomerController::class, 'update'])->name('customers.update');
 
 
     
