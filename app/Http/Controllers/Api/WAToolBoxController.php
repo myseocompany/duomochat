@@ -44,7 +44,7 @@ class WAToolBoxController extends Controller{
             'user' => 'required|string',
             'phone' => 'required|string',
             'content' => 'required|string',
-            'name' => 'required|string',
+            'name' => 'string|nullable',
             'name2' => 'string|nullable',
             'image' => 'string|nullable',
             'APIKEY' => 'required|string'

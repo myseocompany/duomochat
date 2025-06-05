@@ -1,6 +1,7 @@
 <main class="flex-1 p-6 bg-gray-50 overflow-y-auto">
 
-    <h1 class="text-2xl font-bold mb-4 text-blue-600">Acciones</h1>
+    <!-- h1 class="text-2xl font-bold mb-4 text-blue-600">Acciones</h1 -->
+
     <p class="mb-4 text-gray-600">
         Mostrando del {{ $model->firstItem() }} al {{ $model->lastItem() }} de un total de {{ $model->total() }} registros.
     </p>
