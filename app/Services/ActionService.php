@@ -16,6 +16,7 @@ class ActionService{
 
 public function filterModel(Request $request, $useDueDate = false)
 {
+    
     Log::info('filterModel called', $request->all()); // 🚩 Log de los parámetros del Request
 
     $model = Action::where(function ($query) use ($request, $useDueDate) {

@@ -58,7 +58,7 @@ class WAToolBoxController extends Controller{
             Log::info('MessageSource. Error Fuente del mensaje no encontrada', [$validatedData['APIKEY']]);
             return response()->json(['message' => 'Fuente del mensaje no encontrada'], 404);
         }else{
-            //Log::info('MessageSource. Fuente del mensaje encontrada');
+            Log::info('MessageSource. Fuente del mensaje encontrada');
         }
         $reciver_phone = $messageSource->settings['phone_number']; // 57300...
         $isNewCustomer = false;
