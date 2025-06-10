@@ -112,11 +112,14 @@ class ActionController extends Controller
     public function index( Request $request){
 
         
-        // calculo los request de las acciones pendientes
-        $overdueRequest = $this->actionService->createFilteredRequest($request, 'overdue');
-        $todayRequest = $this->actionService->createFilteredRequest($request, 'today');
-        $upcomingRequest = $this->actionService->createFilteredRequest($request, 'upcoming');
+        $blankRequest = new Request(); // 👈 nuevo Request sin parámetros del usuario
+
+        $overdueRequest = $this->actionService->createFilteredRequest($blankRequest, 'overdue');
+        $todayRequest = $this->actionService->createFilteredRequest($blankRequest, 'today');
+        $upcomingRequest = $this->actionService->createFilteredRequest($blankRequest, 'upcoming');
         
+
+
 
         // calculo los recordSet de las acciones filtradas 
         $overdueActions = $this->actionService->filterModel($overdueRequest, true);

@@ -1,9 +1,12 @@
 <aside class="w-64 bg-white border-r p-4">
     <h2 class="text-lg font-bold mb-4">Acciones</h2>
 
-    @include('actions.dashboard')
+    
     <!-- Filtros -->
     <form action="/actions/" method="GET" id="filter_form" class="flex flex-col gap-3">
+        @include('actions.dashboard')
+        <input type="hidden" name="range_type" id="range_type" value="{{ $request->range_type }}">
+
         <div>
             <select name="filter" class="custom-select w-full text-sm" id="filter" onchange="update()">
                 <option value="">Seleccione tiempo</option>
@@ -67,3 +70,9 @@
     max-width: 100%;
 }
 </style>
+<script>
+function submitWithRange(value) {
+    document.getElementById('range_type').value = value;
+    document.getElementById('filter_form').submit();
+}
+</script>

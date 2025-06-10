@@ -1,104 +1,96 @@
-<table class="table table-striped">
-	<tbody>
-	@foreach ($model as $item)
-		<tr>
-			
-			
-			<td>
-        <div>@if(isset($item->customer->status))
-        <span class="badge" style="background-color: {{$item->customer->status->color}} ">
-        {{$item->customer->status->name}} 
-         </span> 
-        @endif</div>
-        <div>
-        @if($item->isPending()) 🙋‍♂️ Pendiente 
-        @endif  
-        <div class="action_created text-sm text-gray-500">
-          @if($item->creator)
-            Creado por: {{ $item->creator->name }}
-          @endif
-        </div>
-        <a href="/customers/{{$item->customer_id}}/show">
-{{$item->created_at}} -   {{$item->getTypeName()}} </a></div>
-        <a href="/customers/{{$item->customer_id}}/show">
-          <h4> {{$item->getCustomerName()}}</h4>
-        </a>
-        <div class="action_note">{{$item->note}}</div>
+<div class="space-y-4">
+  @foreach ($model as $action)
+    @php
+      $customer = $action->customer;
+      $status = $customer->status ?? null;
+    @endphp
 
-        <div class="action_created"></div>
-        <div class="row">
-          
-            @if(isset($item->customer))
-          <div class="col">
-            <a href="/customers/{{$item->customer_id}}/show">{{$item->customer->phone}}</a>
-
-          </div>
-          <div class="col">{{$item->customer->email}}</div>
-          
-            @if(isset($item->customer->project))
-            
-            <div class="col">{{$item->customer->project->name}}</div>
-            @endif
-            @if(isset($item->customer->source))
-            
-            <div class="col">{{$item->customer->source->name}}</div>
-            @endif
-          @endif
-          
-        </div>
-        
-          </td>
-          <td>
-          @if($item->isPending())
-            
-
- <!-- Botón para abrir el modal -->
-    <button
-      type="button"
-      class="btn btn-secondary btn-sm open-pending-modal"
-      data-id="{{ $item->id }}"
-      data-note="{{ htmlentities($item->note) }}"
-      data-type-id="{{ $item->type_id }}"
-      data-status-id="{{ $item->customer->status_id }}"
-      data-customer-name="{{ $item->customer->name }}"
-    >
-      <i class="fa fa-tasks"></i>
-    </button>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.open-pending-modal').forEach(function (button) {
-          button.addEventListener('click', function () {
-            const modal = document.getElementById('pendingActionModal');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            modal.querySelector('#action_id').value = this.dataset.id;
-            modal.querySelector('#pending_note').textContent = this.dataset.note;
-            modal.querySelector('#type_id').value = this.dataset.typeId;
-            modal.querySelector('#status_id').value = this.dataset.statusId;
-            modal.querySelector('#customer_name').textContent = this.dataset.customerName;
+    <div 
+      x-data="{ 
+        completed: {{ $action->delivery_date ? 'true' : 'false' }},
+        show: true,
+        completeAction() {
+          fetch(`/actions/{{ $action->id }}/complete`, {
+            method: 'PATCH',
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              delivery_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al completar la acción');
+            }
+            return response.json();
+          })
+          .then(data => {
+            this.completed = true;
+            setTimeout(() => { this.show = false }, 300);
+          })
+          .catch(error => {
+            alert(error.message);
           });
-        });
-      });
+        }
+      }"
+      x-show="show"
+      x-transition
+      class="bg-white shadow-sm border border-gray-200 rounded-xl p-4 relative flex justify-between items-start"
+    >
 
-      function closeModal() {
-        const modal = document.getElementById('pendingActionModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
+      <div class="w-full">
+        {{-- Estado de acción --}}
+        @if($action->isPending())
+          <span class="text-xs text-red-500 font-semibold">⏰ Programado para: {{ \Carbon\Carbon::parse($action->due_date)->format('d M Y H:i') }}</span>
+        @endif
 
-      function sendForm() {
-        document.getElementById('complete_action_form').submit();
-      }
-    </script> 
+        {{-- Nota principal --}}
+        <div class="text-lg font-bold text-gray-800 mt-1">
+          {{ $action->note }}
+        </div>
+
+        {{-- Info acción --}}
+        <div class="text-sm text-gray-600">
+          {{ $action->getTypeName() }} 
+          @if($action->creator)
+            • Creado por {{ $action->creator->name }}
           @endif
-          </td>
-		</tr>
-	@endforeach
-	</tbody>
-</table>
+        </div>
 
-@include('actions.modal_pending', ['item'=>null, 'model'=>null])
+        {{-- Info cliente --}}
+        <div class="mt-2 text-sm">
+          <a href="/customers/{{ $action->customer_id }}/show" class="text-blue-600 font-semibold">
+            {{ $customer->name }}
+          </a>
+          @if($status)
+            <span class="ml-2 inline-block px-2 py-0.5 text-xs text-white rounded" style="background-color: {{ $status->color }}">
+              {{ $status->name }}
+            </span>
+          @endif
 
+          <div class="text-gray-500 text-xs mt-1">
+            📞 <a href="tel:{{ $customer->phone }}">{{ $customer->phone }}</a> • ✉️ {{ $customer->email }}
+            @if($customer->project) • 🏡 {{ $customer->project->name }} @endif
+            @if($customer->source) • 🎯 {{ $customer->source->name }} @endif
+          </div>
+        </div>
+      </div>
+
+      {{-- Checkbox para completar --}}
+      @if($action->isPending())
+        <div class="ml-4 flex-shrink-0">
+          <input 
+            type="checkbox" 
+            :checked="completed"
+            @change="completeAction()"
+            class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400 checked:bg-blue-600 checked:border-transparent"
+            :disabled="completed"
+          >
+        </div>
+      @endif
+    </div>
+  @endforeach
+</div>

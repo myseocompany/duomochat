@@ -24,15 +24,18 @@ public function filterModel(Request $request, $useDueDate = false)
 
         Log::info('Filtering using date column: ' . $dateColumn);
 
+        $query->whereNotNull('due_date')->whereNull('delivery_date');
+        /*
         if ($request->filled('pending')) {
             Log::info('Filtering pending actions');
             $query->whereNotNull('due_date')->whereNull('delivery_date');
         }
+            */
 
-        if ($request->filled('filter')) {
+        if ($request->filled('range_type')) {
             $now = Carbon\Carbon::now();
             Log::info('Filtering with range_type: ' . $request->range_type);
-            $query->whereNotNull('due_date')->whereNull('delivery_date');
+            //$query->whereNotNull('due_date')->whereNull('delivery_date');
 
             if ($request->range_type == 'overdue') {
                 $query->where('due_date', '<', $now->startOfDay());
