@@ -29,18 +29,19 @@ public function filterModel(Request $request, $useDueDate = false)
             $query->whereNotNull('due_date')->whereNull('delivery_date');
         }
 
-        if ($request->filled('range_type')) {
+        if ($request->filled('filter')) {
             $now = Carbon\Carbon::now();
             Log::info('Filtering with range_type: ' . $request->range_type);
+            $query->whereNotNull('due_date')->whereNull('delivery_date');
 
             if ($request->range_type == 'overdue') {
-                $query->where($dateColumn, '<', $now->startOfDay());
+                $query->where('due_date', '<', $now->startOfDay());
                 Log::info('Overdue filter: due_date < ' . $now->startOfDay());
             } elseif ($request->range_type == 'today') {
-                $query->whereDate($dateColumn, $now->toDateString());
+                $query->whereDate('due_date', $now->toDateString());
                 Log::info('Today filter: due_date = ' . $now->toDateString());
             } elseif ($request->range_type == 'upcoming') {
-                $query->where($dateColumn, '>', $now->endOfDay());
+                $query->where('due_date', '>', $now->endOfDay());
                 Log::info('Upcoming filter: due_date > ' . $now->endOfDay());
             }
         } else {
