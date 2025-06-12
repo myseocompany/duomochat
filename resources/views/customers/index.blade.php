@@ -112,70 +112,72 @@
   </div>
 
   <div>
-  @if($customersGroup->count() > -1)
-    <ul class="groupbar" id="dashboard">
-      @foreach($customersGroup as $item)
-        <li class="groupBarGroup" style="background-color: {{ $item->status_color }}">
-          <h3>{{ $item->count }}</h3>
-          <div class="status-name">
-            <a href="#" onclick="changeStatus({{ $item->status_id }})">
-              {{ $item->status_name }}
-            </a>
-          </div>
-        </li>
-      @endforeach
-    </ul>
+  @if(isset($request->status_id) &&(($request->status_id != "")))  
+      @if($customersGroup->count() > -1)
+      <ul class="groupbar" id="dashboard">
+        @foreach($customersGroup as $item)
+          <li class="groupBarGroup" style="background-color: {{ $item->status_color }}">
+            <h3>{{ $item->count }}</h3>
+            <div class="status-name">
+              <a href="#" onclick="changeStatus({{ $item->status_id }})">
+                {{ $item->status_name }}
+              </a>
+            </div>
+          </li>
+        @endforeach
+      </ul>
 
-    <style>
-      #dashboard {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        padding: 10px 0;
-        justify-content: flex-start;
-      }
-
-      .groupBarGroup {
-        flex: 1 1 150px;
-        max-width: 180px;
-        border-radius: 14px;
-        padding: 12px 10px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        min-height: 90px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .groupBarGroup h3 {
-        font-size: 22px;
-        margin: 0;
-      }
-
-      .status-name a {
-        display: block;
-        color: white;
-        text-decoration: underline;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        font-size: 14px;
-        margin-top: 4px;
-      }
-
-      @media screen and (max-width: 992px) {
+      <style>
         #dashboard {
-          overflow-x: auto;
-          flex-wrap: nowrap;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 10px 0;
+          justify-content: flex-start;
         }
+
         .groupBarGroup {
-          flex: 0 0 auto;
+          flex: 1 1 150px;
+          max-width: 180px;
+          border-radius: 14px;
+          padding: 12px 10px;
+          text-align: center;
+          color: white;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          min-height: 90px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
-      }
-    </style>
-  @else
-    Sin Estados
+
+        .groupBarGroup h3 {
+          font-size: 22px;
+          margin: 0;
+        }
+
+        .status-name a {
+          display: block;
+          color: white;
+          text-decoration: underline;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          font-size: 14px;
+          margin-top: 4px;
+        }
+
+        @media screen and (max-width: 992px) {
+          #dashboard {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+          }
+          .groupBarGroup {
+            flex: 0 0 auto;
+          }
+        }
+      </style>
+    @else
+      Sin Estados
+    @endif
   @endif
 </div>
 
