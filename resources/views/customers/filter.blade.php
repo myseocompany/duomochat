@@ -133,7 +133,7 @@
 
     
 
-<!--
+
     @if(isset($projects))
     <select name="project_id" class="custom-select" id="project_id" onchange="submit();">
       <option value="">Proyecto...</option>
@@ -146,7 +146,7 @@
     </select>
     @endif
 
--->   
+  
     <input type="text" name="search" id="search" value="{{$request->search}}" placeholder="Busca o escribe">
     <span>
       <?php $cu = $request->created_updated; ?>
