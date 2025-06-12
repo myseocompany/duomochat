@@ -112,7 +112,7 @@
   </div>
 
   <div>
-  @if( ( isset($request->status_id) &&($request->status_id != ""))! )  
+  @if( !( isset($request->status_id) &&($request->status_id != "")) )  
       @if($customersGroup->count() > -1)
       <ul class="groupbar" id="dashboard">
         @foreach($customersGroup as $item)
