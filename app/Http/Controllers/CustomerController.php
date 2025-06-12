@@ -1728,5 +1728,23 @@ class CustomerController extends Controller
         return redirect()->back();
     }
 
+    public function quickUpdate(Request $request, $id)
+    {
+        $customer = Customer::findOrFail($id);
+
+        if ($request->has('project_id')) {
+            $customer->project_id = $request->project_id;
+        }
+
+        if ($request->has('source_id')) {
+            $customer->source_id = $request->source_id;
+        }
+
+        $customer->save();
+
+        return redirect()->back()->with('statusone', 'Proyecto y origen actualizados con éxito.');
+    }
+
+
 
 }
