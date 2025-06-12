@@ -442,4 +442,4 @@ Route::post('/order-files/delete/{id}', [OrderFileController::class, 'delete'])-
 Route::get('/landing', [LandingController::class,'productList']);
 
 
-Route::post('/customers/{id}/quick-update', [CustomerController::class, 'quickUpdate'])->name('customers.quick_update');
+Route::post('/customers/{id}/quick-update', [CustomerController::class, 'quickUpdate'])->name('customers.quick');

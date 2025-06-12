@@ -42,10 +42,10 @@
       </a>
     </p>
 
-<form action="{{ route('customers.quick_update', $model->id) }}" method="POST" id="quickUpdateForm">
+<form action="{{ route('customers.update', $model->id) }}" method="POST" id="quickUpdateForm">
     @csrf
-    @method('POST') {{-- Si tu ruta es POST como en tu router, o usa PUT si usas resourceful --}}
-    
+    {{-- Si tu ruta es POST como en tu router, o usa PUT si usas resourceful --}}
+    @method('PUT')
     <div class="flex flex-col gap-4 mt-4">
 
         {{-- Proyecto --}}

@@ -1060,48 +1060,21 @@ class CustomerController extends Controller
         $cHistory = new CustomerHistory;
         $cHistory->saveFromModel($model);
 
-        $model->name = $request->name;
-        $model->document = $request->document;
-        $model->position = $request->position;
-        $model->business = $request->business;
-        $model->phone = $request->phone;
-        $model->email = $request->email;
-        $model->notes = $request->notes;
-        $model->birthday_updated = $request->birthday_updated;
-        
+        $fields = [
+            'name', 'document', 'position', 'business', 'phone', 'email',
+            'notes', 'birthday_updated', 'pathology', 'hobbie', 'facebook_url',
+            'instagram_url', 'phone2', 'department', 'address', 'city', 'country',
+            'bought_products', 'total_sold', 'user_id', 'source_id', 'status_id',
+            'project_id', 'birthday', 'scoring', 'contact_name', 'contact_phone2',
+            'contact_email', 'contact_position'
+        ];
 
-        $model->pathology = $request->pathology;
-        $model->hobbie = $request->hobbie;
-        $model->facebook_url = $request->facebook_url;
-        $model->instagram_url = $request->instagram_url;
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $model->{$field} = $request->{$field};
+            }
+        }
 
-
-        $model->phone2 = $request->phone2;
-        $model->department = $request->department;
-        $model->address = $request->address;
-        $model->city = $request->city;
-        $model->country = $request->country;
-        $model->bought_products = $request->bought_products;
-        $model->total_sold = $request->total_sold;
-
-        $model->user_id = $request->user_id;
-        $model->source_id = $request->source_id;
-        $model->status_id = $request->status_id;
-        $model->project_id = $request->project_id;
-        $model->birthday = $request->birthday;
-        $model->scoring = $request->scoring;
-        //$model->first_installment_date = $request->first_installment_date;
-
-
-        //$model->meta->gender_id = $request->meta_gender_id;
-
-
-
-        //datos de contacto
-        $model->contact_name = $request->contact_name;
-        $model->contact_phone2 = $request->contact_phone2;
-        $model->contact_email = $request->contact_email;
-        $model->contact_position = $request->contact_position;
 
         if (isset($request->meta_gender_id) && ($this->isValidMeta($request->meta_gender_id)))
             $model->meta_gender_id = $request->meta_gender_id;
