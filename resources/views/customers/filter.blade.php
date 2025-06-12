@@ -165,16 +165,3 @@
 
 
 
-<script>
-
-var rfm = new Array(); 
-@if(isset($rfm_groups))
-    @foreach($rfm_groups as $item)
-
-    rfm["{{$item->name}}"] =  Array( {{$item->recency_min}} ,{{$item->recency_max}},{{$item->frequency_min}}, {{$item->frequency_max}}); 
-    
-
-
-    @endforeach
-@endif
-</script>

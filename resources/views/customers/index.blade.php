@@ -118,7 +118,7 @@
         <li class="groupBarGroup" style="background-color: {{ $item->status_color }}">
           <h3>{{ $item->count }}</h3>
           <div class="status-name">
-            <a href="#" onclick="changeStatus({{ $item->id }})">
+            <a href="#" onclick="changeStatus({{ $item->status_id }})">
               {{ $item->status_name }}
             </a>
           </div>
