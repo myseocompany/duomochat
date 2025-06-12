@@ -16,33 +16,32 @@
   @csrf
   @method('PUT')
 
-  <div class="space-y-4">
-    @foreach($meta_fields as $field)
-      <div class="flex items-center gap-4">
-        <label class="w-40 text-sm font-semibold text-gray-700 text-right">
-          {{ $field['label'] }}
-        </label>
+<div class="space-y-4">
+  @foreach($meta_fields as $field)
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-gray-700">
+        {{ $field['label'] }}
+      </label>
 
-        <div class="flex-1">
-          @if($field['type'] === 'Texto Corto' || $field['type'] === 'textarea')
-            <input type="text" 
-                   name="meta_{{ $field['master_meta_datas_id'] }}" 
-                   value="{{ $field['value'] }}" 
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-sm">
-          @elseif($field['type'] === 'Select')
-            <select name="meta_{{ $field['master_meta_datas_id'] }}" 
-                    class="w-full rounded-md border-gray-300 shadow-sm text-sm">
-              @foreach($field['options'] as $option)
-                <option value="{{ $option->id }}" {{ $option->selected ? 'selected' : '' }}>
-                  {{ $option->name }}
-                </option>
-              @endforeach
-            </select>
-          @endif
-        </div>
-      </div>
-    @endforeach
-  </div>
+      @if($field['type'] === 'Texto Corto' || $field['type'] === 'textarea')
+        <input type="text" 
+               name="meta_{{ $field['master_meta_datas_id'] }}" 
+               value="{{ $field['value'] }}" 
+               class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-sm">
+      @elseif($field['type'] === 'Select')
+        <select name="meta_{{ $field['master_meta_datas_id'] }}" 
+                class="w-full rounded-md border-gray-300 shadow-sm text-sm">
+          @foreach($field['options'] as $option)
+            <option value="{{ $option->id }}" {{ $option->selected ? 'selected' : '' }}>
+              {{ $option->name }}
+            </option>
+          @endforeach
+        </select>
+      @endif
+    </div>
+  @endforeach
+</div>
+
 
   <div class="mt-6 text-center">
     <button type="submit" class="inline-flex items-center px-6 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700">
