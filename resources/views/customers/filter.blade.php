@@ -32,7 +32,7 @@
 
 <!--RFM-->
 
-      
+      <!--
         <select  name="rfm_group_id" class="custom-select" id="rfm_group_id" onchange="submit();">
           <option value="">Tipo de cliente</option>
          @if(isset($rfm_groups) && $rfm_groups!= "")
@@ -44,6 +44,7 @@
           @endforeach
           @endif
         </select>
+      -->
         <!--
         <select multiple name="recency_points" id="recency_points">
           <option value="">Recencia</option>
