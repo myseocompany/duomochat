@@ -126,13 +126,12 @@ class ActionController extends Controller
         $todayActions = $this->actionService->filterModel($todayRequest, true);
         $upcomingActions = $this->actionService->filterModel($upcomingRequest, true);
 
-        if($request->filled('pending'))
-            $model = $this->actionService->filterModel($request, true);
-        else    
-            $model = $this->actionService->filterModel($request, false);
+        $useDueDate = $request->input('pending') === 'true';
+        $model = $this->actionService->filterModel($request, $useDueDate);
+
         
         $users = User::where('status_id' , '=' , 1)->get();
-        $action_options = ActionType::all();
+        $action_options = ActionType::where("status_id", 1)->orderby("weight", "DESC")->get();
         $statuses_options = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
         
 

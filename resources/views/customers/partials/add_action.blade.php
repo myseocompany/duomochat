@@ -14,7 +14,9 @@
       <select name="status_id" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" required>
         <option value="">Estado</option>
         @foreach($statuses_options as $status)
-          <option value="{{ $status->id }}">{{ $status->name }}</option>
+              <option value="{{ $status->id }}" {{ $status->id == $model->status_id ? 'selected' : '' }}>
+                {{ $status->name }}
+              </option>
         @endforeach
       </select>
 

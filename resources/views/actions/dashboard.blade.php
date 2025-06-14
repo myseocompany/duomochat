@@ -1,4 +1,3 @@
-<!-- Tarjetas resumen -->
 <div class="grid grid-cols-2 gap-2 mb-6">
     <button type="button" onclick="submitWithRange('overdue')" class="flex flex-col items-center justify-center p-2 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
         <span class="text-xs font-medium">Vencidas</span>

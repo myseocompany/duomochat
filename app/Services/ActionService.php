@@ -16,73 +16,64 @@ class ActionService{
 
 public function filterModel(Request $request, $useDueDate = false)
 {
-    
-    Log::info('filterModel called', $request->all()); // 🚩 Log de los parámetros del Request
+    Log::info('filterModel called', $request->all());
 
-    $model = Action::where(function ($query) use ($request, $useDueDate) {
-        $dateColumn = $useDueDate ? 'due_date' : 'created_at';
 
-        Log::info('Filtering using date column: ' . $dateColumn);
+    $dateColumn = $useDueDate ? 'due_date' : 'created_at'; // ✅ Se define fuera del closure
 
-        $query->whereNotNull('due_date')->whereNull('delivery_date');
-        /*
-        if ($request->filled('pending')) {
-            Log::info('Filtering pending actions');
+    $model = Action::where(function ($query) use ($request, $useDueDate, $dateColumn) {
+
+        if ($useDueDate) {
             $query->whereNotNull('due_date')->whereNull('delivery_date');
         }
-            */
 
         if ($request->filled('range_type')) {
             $now = Carbon\Carbon::now();
+
             Log::info('Filtering with range_type: ' . $request->range_type);
-            //$query->whereNotNull('due_date')->whereNull('delivery_date');
 
             if ($request->range_type == 'overdue') {
                 $query->where('due_date', '<', $now->startOfDay());
-                Log::info('Overdue filter: due_date < ' . $now->startOfDay());
             } elseif ($request->range_type == 'today') {
                 $query->whereDate('due_date', $now->toDateString());
-                Log::info('Today filter: due_date = ' . $now->toDateString());
             } elseif ($request->range_type == 'upcoming') {
                 $query->where('due_date', '>', $now->endOfDay());
-                Log::info('Upcoming filter: due_date > ' . $now->endOfDay());
             }
-        } else {
+        } elseif ($request->filled('from_date') && $request->filled('to_date')) {
+            $fromDate = Carbon\Carbon::parse($request->from_date)->startOfDay();
+            $toDate = Carbon\Carbon::parse($request->to_date)->endOfDay();
 
-            if ($request->filled('from_date') && $request->filled('to_date')) {
-                $fromDate = Carbon\Carbon::parse($request->from_date)->startOfDay();
-                $toDate = Carbon\Carbon::parse($request->to_date)->endOfDay(); // Correcto
-                $query->whereBetween($dateColumn, [$fromDate, $toDate]);
-            }
+            Log::info("Filtering by custom range: $fromDate to $toDate using $dateColumn");
+                Log::info('dateColumn: ' . $dateColumn);
+            Log::info("From: $fromDate - To: $toDate");
 
+
+            $query->whereBetween($dateColumn, [$fromDate, $toDate]);
         }
 
         if ($request->filled('user_id')) {
             $query->where('creator_user_id', $request->user_id);
-            Log::info('Filtering by user_id: ' . $request->user_id);
         }
+
         if ($request->filled('type_id')) {
             $query->where('type_id', $request->type_id);
-            Log::info('Filtering by type_id: ' . $request->type_id);
         }
 
         if ($request->filled('action_search')) {
             $searchTerm = '%' . $request->action_search . '%';
-            $query->where(function ($subQuery) use ($searchTerm) {
-                $subQuery->where('note', 'like', $searchTerm);
-            });
-            Log::info('Filtering by search term: ' . $searchTerm);
+            $query->where('note', 'like', $searchTerm);
         }
     })
     ->orderBy('due_date', 'asc')
     ->paginate(15);
 
-    Log::info('Total results: ' . $model->total()); // 🚩 Log de cuántos resultados devolvió
+    Log::info('Total results: ' . $model->total());
 
     $model->getActualRows = $model->currentPage() * $model->perPage();
 
     return $model;
 }
+
 
 
     
