@@ -12,6 +12,7 @@
   <div class="md:col-span-7">
     @include('customers.partials.timeline')
     @include('customers.partials.add_action')
+    @include('actions.modal_pending', ['action_options' => $action_options, 'statuses_options' => $statuses_options])
   </div>
 
   <!-- Panel derecho -->

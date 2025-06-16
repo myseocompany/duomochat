@@ -5,41 +5,7 @@
       $status = $customer->status ?? null;
     @endphp
 
-    <div 
-      x-data="{ 
-        completed: {{ $action->delivery_date ? 'true' : 'false' }},
-        show: true,
-        completeAction() {
-          fetch(`/actions/{{ $action->id }}/complete`, {
-            method: 'PATCH',
-            headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}',
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              delivery_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
-            })
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Error al completar la acción');
-            }
-            return response.json();
-          })
-          .then(data => {
-            this.completed = true;
-            setTimeout(() => { this.show = false }, 300);
-          })
-          .catch(error => {
-            alert(error.message);
-          });
-        }
-      }"
-      x-show="show"
-      x-transition
-      class="bg-white shadow-sm border border-gray-200 rounded-xl p-4 relative flex justify-between items-start"
-    >
+    <div class="bg-white shadow-sm border border-gray-200 rounded-xl p-4 relative flex justify-between items-start">
 
       <div class="w-full">
         {{-- Estado de acción --}}
@@ -82,12 +48,16 @@
       {{-- Checkbox para completar --}}
       @if($action->isPending())
         <div class="ml-4 flex-shrink-0">
-          <input 
-            type="checkbox" 
-            :checked="completed"
-            @change="completeAction()"
+          <input
+            type="checkbox"
+            data-toggle="modal"
+            data-id="{{ $action->id }}"
+            data-note="{{ $action->note }}"
+            data-type-id="{{ $action->type_id }}"
+            data-status-id="{{ $customer->status_id }}"
+            data-customer-name="{{ $customer->name }}"
             class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400 checked:bg-blue-600 checked:border-transparent"
-            :disabled="completed"
+            onclick="this.checked=false"
           >
         </div>
       @endif

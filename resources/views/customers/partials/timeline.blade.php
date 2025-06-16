@@ -3,43 +3,7 @@
   <ul class="space-y-6">
     @foreach($actions as $action)
       @if($action->shouldShow())
-      <li 
-        x-data="{ 
-          completed: {{ $action->delivery_date ? 'true' : 'false' }},
-          show: true,
-          completeAction() {
-            fetch(`/actions/{{ $action->id }}/complete`, {
-              method: 'PATCH',
-              headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                delivery_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
-              })
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Error al completar la acción');
-              }
-              return response.json();
-            })
-            .then(data => {
-              this.completed = true;
-              setTimeout(() => { this.show = false }, 300);
-            })
-            .catch(error => {
-              alert(error.message);
-            });
-          }
-        }"
-        x-show="show"
-        x-transition:leave="transition ease-in duration-300"
-        x-transition:leave-start="opacity-100 transform scale-100"
-        x-transition:leave-end="opacity-0 transform scale-90"
-        class="relative flex items-start justify-between border-l-4 border-blue-500 pl-4"
-      >
+      <li class="relative flex items-start justify-between border-l-4 border-blue-500 pl-4">
         <!-- Action content -->
         <div>
           <!-- Due date if pending -->
@@ -68,17 +32,21 @@
         </div>
 
         <!-- Completion Checkbox -->
-        @if($action->isPending())
-        <div class="flex items-center ml-4">
-          <input 
-            type="checkbox" 
-            :checked="completed"
-            @change="completeAction()"
-            class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400 checked:bg-blue-600 checked:border-transparent"
-            :disabled="completed"
-          >
-        </div>
-        @endif
+          @if($action->isPending())
+          <div class="flex items-center ml-4">
+            <input
+              type="checkbox"
+              data-toggle="modal"
+              data-id="{{ $action->id }}"
+              data-note="{{ $action->note }}"
+              data-type-id="{{ $action->type_id }}"
+              data-status-id="{{ $action->customer->status_id }}"
+              data-customer-name="{{ $action->customer->name }}"
+              class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400 checked:bg-blue-600 checked:border-transparent"
+              onclick="this.checked=false"
+            >
+          </div>
+          @endif
       </li>
       @endif
     @endforeach

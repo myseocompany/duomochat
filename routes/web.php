@@ -218,6 +218,8 @@ Route::middleware('auth')->prefix('actions')->group(function () {
 
 });
 
+Route::post('/customers/action/pending', [ActionController::class, 'completePendingAction'])->middleware('auth');
+
 // Pending Actions Routes
 Route::middleware('auth')->prefix('pending_actions')->group(function () {
     Route::get('/', [ActionController::class, 'indexPending'])->name('pending_actions');
