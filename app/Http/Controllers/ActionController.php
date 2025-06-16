@@ -16,6 +16,7 @@ use App\Models\Email;
 use Mail;
 use App\Models\DateTime;
 use App\Models\ActionType;
+use App\Models\CustomerHistory;
 
 use App\Services\ActionService;
 
@@ -249,5 +250,37 @@ class ActionController extends Controller
             'message' => 'Acción completada',
             'delivery_date' => $action->delivery_date,
         ]);
+    }
+
+    public function completePendingAction(Request $request)
+    {
+        $request->validate([
+            'action_id' => 'required|exists:actions,id',
+            'note' => 'required|string',
+            'type_id' => 'required|exists:action_types,id',
+            'status_id' => 'required|exists:customer_statuses,id',
+        ]);
+
+        $pendingAction = Action::findOrFail($request->action_id);
+        $customer = $pendingAction->customer;
+
+        $pendingAction->delivery_date = Carbon\Carbon::now();
+        $pendingAction->save();
+
+        $newAction = new Action();
+        $newAction->note = $request->note;
+        $newAction->type_id = $request->type_id;
+        $newAction->creator_user_id = Auth::id();
+        $newAction->customer_id = $pendingAction->customer_id;
+        $newAction->save();
+
+        if ($customer) {
+            $history = new CustomerHistory();
+            $history->saveFromModel($customer);
+            $customer->status_id = $request->status_id;
+            $customer->save();
+        }
+
+        return redirect()->back()->with('statusone', 'Acción completada con éxito');
     }
 }

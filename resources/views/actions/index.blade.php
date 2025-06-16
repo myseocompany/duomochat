@@ -10,6 +10,8 @@
 
     @include('actions.main')
 
+    @include('actions.modal_pending', ['action_options' => $action_options, 'statuses_options' => $statuses_options])
+
 </div>
 
 @endsection
