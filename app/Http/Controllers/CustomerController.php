@@ -873,6 +873,9 @@ class CustomerController extends Controller
         $model->source_id = $request->source_id;
         $model->project_id = $request->project_id;
 
+        $model->interested_product_id = $request->interested_product_id;
+
+
         if (isset($request->birthday) && ($request->birthday != null))
             $model->birthday = $request->birthday;
         //$model->first_installment_date = $request->first_installment_date;
@@ -1082,6 +1085,9 @@ class CustomerController extends Controller
             $model->meta_economic_activity_id = $request->meta_economic_activity_id;
         if (isset($request->meta_income_id) && ($this->isValidMeta($request->meta_income_id)))
             $model->meta_income_id = $request->meta_income_id;
+
+        $model->interested_product_id = $request->interested_product_id;
+
         /*
         if(isset($request->meta_investment_id)&& ($this->isValidMeta($request->meta_investment_id)))
             $model->meta_investment_id = $request->meta_investment_id;
