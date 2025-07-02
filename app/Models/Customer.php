@@ -430,9 +430,13 @@ class Customer extends Authenticatable
     }
 
     public function project()
-{
-    return $this->belongsTo(\App\Models\Project::class, 'project_id', 'id');
-}
+    {
+        return $this->belongsTo(\App\Models\Project::class, 'project_id', 'id');
+    }
 
+    public function interested_product()
+    {
+        return $this->belongsTo(Product::class, 'interested_product_id');
+    }
 
 }

@@ -47,7 +47,19 @@
             <input type="text" class="form-control" id="refered_by" name="refered_by" placeholder="Referido por...">
           </div>
         </div>
-
+<div class="col-sm-3">
+  <div class="form-group">
+    <label for="interested_product_id">Producto de interés:</label>
+    <select name="interested_product_id" id="interested_product_id" class="form-control">
+      <option value="">Seleccione...</option>
+      @foreach ($products as $product)
+        <option value="{{ $product->id }}" @if($product->id == $model->interested_product_id) selected @endif>
+          {{ $product->name }}
+        </option>
+      @endforeach
+    </select>
+  </div>
+</div>
         <div class="col-sm-12">
           <div class="form-group">
             <label for="users">Asignado A:</label>

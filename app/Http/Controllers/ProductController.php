@@ -195,6 +195,8 @@ class ProductController extends Controller
         $model->status_id = $request->status_id;
         $model->price = $request->price;
         $model->notes = $request->notes;
+        $model->interested_product_id = $request->interested_product_id;
+
 
         if ($request->hasFile('image_url')) {
             $file = $request->file('image_url');
@@ -230,6 +232,8 @@ class ProductController extends Controller
     $product->status_id = $request->status_id;
     $product->quantity = $request->quantity;
     $product->reference = $request->reference;
+    $model->interested_product_id = $request->interested_product_id;
+
 
     $product->save();
     // Si se sube una imagen, procesarla
