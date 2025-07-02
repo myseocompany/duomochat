@@ -12,7 +12,7 @@ use App\Models\CustomerStatusPhase;
 use App\Models\User;
 use App\Models\CustomerSource;
 use App\Models\CustomerHistory;
-use App\Models\Products;
+use App\Models\Product;
 
 // use App\Account;
 // use App\EmployeeStatus;
@@ -736,7 +736,7 @@ class CustomerController extends Controller
         $projects = Project::all();
         $meta_fields = $metaService->getFieldsForCustomer(1, null); // null porque aún no hay cliente
 
-        $products = Products::all();
+        $products = Product::all();
 
         return view('customers.create', compact('customers_statuses', 'users',
         'products',
@@ -1034,7 +1034,7 @@ class CustomerController extends Controller
         $customer_statuses = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
         $customer_sources = CustomerSource::all();
         $users = User::all();
-        $products = Products::all();
+        $products = Product::all();
 
         $projects = Project::all();
 
