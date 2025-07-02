@@ -1004,6 +1004,7 @@ class CustomerController extends Controller
         $customer_sources_options = CustomerSource::all();
         $projects_options = Project::all();
         
+        $products = Product::orderBy('name')->get();
 
         return view('customers.show', compact(
             'model',
@@ -1017,7 +1018,8 @@ class CustomerController extends Controller
             'pending_action',
             'meta_fields',
             'customer_sources_options',
-            'projects_options'
+            'projects_options',
+            'products'
         ));
     }
 
@@ -1730,6 +1732,11 @@ class CustomerController extends Controller
 
         if ($request->has('source_id')) {
             $customer->source_id = $request->source_id;
+        }
+
+
+        if ($request->has('interested_product_id')) {
+            $customer->interested_product_id = $request->interested_product_id;
         }
 
         $customer->save();

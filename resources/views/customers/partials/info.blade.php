@@ -60,6 +60,20 @@
             </select>
         </div>
 
+        {{-- Producto de interés --}}
+        <div class="flex items-center gap-2">
+          <label class="font-semibold w-24 text-right">Producto:</label>
+          <select name="interested_product_id" onchange="document.getElementById('quickUpdateForm').submit()" class="flex-1 rounded border-gray-300 shadow-sm text-sm">
+            <option value="">Seleccione...</option>
+            @foreach($products as $product)
+              <option value="{{ $product->id }}" {{ $model->interested_product_id == $product->id ? 'selected' : '' }}>
+                {{ $product->name }}
+              </option>
+            @endforeach
+          </select>
+        </div>
+
+
         {{-- Origen --}}
         <div class="flex items-center gap-2">
             <label class="font-semibold w-24 text-right">Origen:</label>
