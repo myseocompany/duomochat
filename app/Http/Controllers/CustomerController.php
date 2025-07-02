@@ -734,7 +734,11 @@ class CustomerController extends Controller
         $projects = Project::all();
         $meta_fields = $metaService->getFieldsForCustomer(1, null); // null porque aún no hay cliente
 
-        return view('customers.create', compact('customers_statuses', 'users', 'customer_sources', 'projects', 'meta_fields'));
+        $products = Products::all();
+
+        return view('customers.create', compact('customers_statuses', 'users',
+        'products',
+        'customer_sources', 'projects', 'meta_fields'));
     }
 
 
@@ -1028,12 +1032,19 @@ class CustomerController extends Controller
         $customer_statuses = CustomerStatus::orderBy("stage_id", "ASC")->orderBy("weight", "ASC")->get();
         $customer_sources = CustomerSource::all();
         $users = User::all();
+        $products = Products::all();
 
         $projects = Project::all();
 
         $meta_fields = $metaService->getFieldsForCustomer(1, $model->id); // 1 = master padre
 
-        return view('customers.edit', compact('model', 'customer_statuses',  'users', 'customer_sources', 'projects', 'meta_fields'));
+        return view('customers.edit', compact('model', 
+        'customer_statuses',
+        'users',
+        'customer_sources',
+        'projects',
+        'products',
+        'meta_fields'));
     }
 
 
