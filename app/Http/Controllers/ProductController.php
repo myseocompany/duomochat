@@ -21,12 +21,14 @@ class ProductController extends Controller
             $request->type_id == 1;
 
         $model = $this->getModel($request);
+
         //$group = $this->groupModel($request);
         $statuses = ProductStatus::all();
         $types = ProductType::where(function ($query) use ($request) {
             if (isset($request->category_id))
                 $query->where('category_id', $request->category_id);
         })->orderBy('weight', 'ASC')->orderBy('category_id', 'ASC')->get();
+
         $root_types = ProductType::orderBy('weight', 'ASC')->whereNull('parent_id')->get();
 
         $categories = Category::all();
@@ -59,44 +61,51 @@ class ProductController extends Controller
 
     public function getModel($request)
     {
-        $model = Product::where(function ($query) use ($request) {
-            $query->where("status_id", 1);
-            if (isset($request->from_date) && ($request->from_date != null)) {
-                $query->whereBetween('products.updated_at', [$request->from_date, $request->to_date . " 23:59:59"]);
-            }
-            if (isset($request->status_id) && ($request->status_id != null)) {
-                $query->where('products.status_id', $request->status_id);
-            }
-            if (isset($request->category_id) && ($request->category_id != null)) {
-                if ($request->category_id == 1) {
-                    $query->whereIn('category_id', [1, 2, 3]);
-                } elseif ($request->category_id == 4) {
-                    $query->whereIn('category_id', [4, 5, 6]);
-                } else {
-                    $query->where('category_id', $request->category_id);
-                }
-            }
-            if (isset($request->type_id) && ($request->type_id != null)) {
-                if ($request->type_id == 11 || $request->type_id == 10) {
-                    $query->whereIn('type_id', ProductType::getChilds(ProductType::getId($request->type_id)));
-                } else {
-                    $query->where('type_id', $request->type_id);
-                }
-            }
-            if (isset($request->keyword) && ($request->keyword != null)) {
-                $query->where(function ($innerQuery) use ($request) {
-                    $innerQuery->orwhere('products.name', "like", "%$request->keyword%");
-                });
-            }
+        $model = Product::with(['type', 'category', 'status'])
+            ->where(function ($query) use ($request) {
+                $query->where("status_id", 1);
 
-            $query->where('quantity', '>', 0);
-        })
-            ->select('id', 'name', 'status_id', 'price', 'type_id', 'updated_at', 'category_id', 'quantity','image_url')
+                if (isset($request->from_date) && ($request->from_date != null)) {
+                    $query->whereBetween('products.updated_at', [$request->from_date, $request->to_date . " 23:59:59"]);
+                }
+
+                if (isset($request->status_id) && ($request->status_id != null)) {
+                    $query->where('products.status_id', $request->status_id);
+                }
+
+                if (isset($request->category_id) && ($request->category_id != null)) {
+                    if ($request->category_id == 1) {
+                        $query->whereIn('category_id', [1, 2, 3]);
+                    } elseif ($request->category_id == 4) {
+                        $query->whereIn('category_id', [4, 5, 6]);
+                    } else {
+                        $query->where('category_id', $request->category_id);
+                    }
+                }
+
+                if (isset($request->type_id) && ($request->type_id != null)) {
+                    if ($request->type_id == 11 || $request->type_id == 10) {
+                        $query->whereIn('type_id', ProductType::getChilds(ProductType::getId($request->type_id)));
+                    } else {
+                        $query->where('type_id', $request->type_id);
+                    }
+                }
+
+                if (isset($request->keyword) && ($request->keyword != null)) {
+                    $query->where(function ($innerQuery) use ($request) {
+                        $innerQuery->orwhere('products.name', "like", "%$request->keyword%");
+                    });
+                }
+
+                $query->where('quantity', '>', 0);
+            })
+            ->select('id', 'name', 'status_id', 'price', 'type_id', 'updated_at', 'category_id', 'quantity', 'image_url')
             ->orderBy('name', 'ASC')
             ->get();
 
         return $model;
     }
+
 
     public function groupModel($request)
     {
