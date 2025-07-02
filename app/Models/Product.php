@@ -41,4 +41,10 @@ class Product extends Model
     
         return $formattedPrice;
     }
+
+    public function type()
+    {
+        return $this->belongsTo(ProductType::class, 'type_id');
+    }
+
 }
