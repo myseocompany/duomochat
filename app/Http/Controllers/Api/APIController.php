@@ -3120,92 +3120,84 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
     }
 
     public function saveAPIRD($request_model, $opportunity)
-    {
+{
+    // Verifica si el modelo ya existe exactamente
+    $equal = $this->isEqualModel($request_model);
 
+    if (!$equal) {
+        // Verifica si existe un modelo similar
+        $similar = $this->getSimilarModel($request_model);
 
+        if ($similar) {
+            $model = $similar;
 
-        //   igual   |   similar     
-        //     No          No      crea    
-        //     No          Si      actualiza
-        //     Si                  actualiza                       
-
-        // vericamos que no se inserte 2 veces
-        $equal = $this->isEqualModel($request_model);
-
-        // dd($equal);
-        if (!$equal) {
-            //dd($status); 
-            // verificamos uno similar
-            $similar = $this->getSimilarModel($request_model);
-
-            if ($similar) {
-                // creo un nuevo registro
-                $model = $similar;
-                
-                if (isset($request_model->name)) {
-                    $model->name = $request_model->name;
-                }
-                if (isset($request_model->rd_public_url)) {
-                    $model->rd_public_url = $request_model->rd_public_url;
-                }
-                if (isset($request_model->scoring_profile)) {
-                    $model->scoring_profile = $request_model->scoring_profile;
-                }
-                if (isset($request_model->scoring_interest)) {
-                    $model->scoring_interest = $request_model->scoring_interest;
-                }
-
-                if (isset($request_model->email)) {
-                    $model->contact_email = $similar->email;
-                    $model->email = $request_model->email;
-                }
-
-                if (isset($request_model->count_empanadas)) {
-                    $model->count_empanadas = $request_model->count_empanadas;
-                }
-
-                if (isset($request_model->maker)) {
-                    $model->maker = $request_model->maker;
-                }
-
-                if (isset($request_model->inquiry_product_id)) {
-                    $model->inquiry_product_id = $request_model->inquiry_product_id;
-                }
-
-                if (isset($request_model->campaign_name)) {
-                    $model->campaign_name = $request_model->campaign_name;
-                }
-
-
-                $model->notes = $request_model->notes;
-                $model->notes .= " actualizado ";
-
-                if ($model->product_id != 15)
-                    $model->status_id = $request_model->status_id;
-
-                $model->save();
-                $this->updateCustomerHistory($opportunity, $model, $request_model);
-            } else {
-                // Verifico si es proyecto
-                $request_model->user_id = $this->getRandomNextUserID();
-                /*
-                if(isset($request_model->maker) && ($request_model->maker == 0))
-                    $request_model->user_id = null; #antes era 92 Estefanía
-                else 
-                    $request_model->user_id = $this->getNextUserID();
-                */
-                $request_model->save();
-
-                $model = $request_model;
+            // Actualiza nombre si viene en la solicitud
+            if (isset($request_model->name)) {
+                $model->name = $request_model->name;
             }
-        } else {
-            $model = $equal;
-        }
 
-        //dd($similar);
-        $this->storeActionAPIRD($request_model, $model->id);
-        return $model;
+            if (isset($request_model->rd_public_url)) {
+                $model->rd_public_url = $request_model->rd_public_url;
+            }
+
+            if (isset($request_model->scoring_profile)) {
+                $model->scoring_profile = $request_model->scoring_profile;
+            }
+
+            if (isset($request_model->scoring_interest)) {
+                $model->scoring_interest = $request_model->scoring_interest;
+            }
+
+            if (isset($request_model->email)) {
+                $model->contact_email = $similar->email;
+                $model->email = $request_model->email;
+            }
+
+            if (isset($request_model->count_empanadas)) {
+                $model->count_empanadas = $request_model->count_empanadas;
+            }
+
+            if (isset($request_model->maker)) {
+                $model->maker = $request_model->maker;
+            }
+
+            if (isset($request_model->inquiry_product_id)) {
+                $model->inquiry_product_id = $request_model->inquiry_product_id;
+            }
+
+            if (isset($request_model->campaign_name)) {
+                $model->campaign_name = $request_model->campaign_name;
+            }
+
+            if (isset($request_model->custom_fields)) {
+                $model->custom_fields = $request_model->custom_fields;
+            }
+
+            if (isset($request_model->notes)) {
+                $model->notes = $request_model->notes . ' actualizado ';
+            }
+
+            if (isset($request_model->status_id) && $request_model->status_id > 0) {
+                $model->status_id = $request_model->status_id;
+            }
+
+            $model->save();
+            $this->updateCustomerHistory($opportunity, $model, $request_model);
+        } else {
+            // Es un nuevo registro
+            $request_model->user_id = $this->getRandomNextUserID();
+            $request_model->save();
+
+            $model = $request_model;
+        }
+    } else {
+        $model = $equal;
     }
+
+    $this->storeActionAPIRD($request_model, $model->id);
+    return $model;
+}
+
 
 
     public function saveAPICustomerRD($request)
