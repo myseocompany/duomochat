@@ -2697,7 +2697,7 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
             $model->position = $data["custom_fields"]["Cargo que ocupas dentro de la empresa"];
         }
 
-        $model->status_id = -1;
+        $model->status_id = 1;
         if (isset($data["lead_stage"])) {
             $status = $data["lead_stage"];
             if (isset($opportunity) && ($opportunity == 'true')) {
