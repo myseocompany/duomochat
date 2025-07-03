@@ -2862,9 +2862,6 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
         if (isset($data["opportunity"])) {
             $opportunity = $data["opportunity"];
         }
-        if (isset($data["name"])) {
-            $model->name = $data["name"];
-        }
         if (isset($data["email"])) {
             $model->email = $data["email"];
         }
@@ -3144,7 +3141,10 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
             if ($similar) {
                 // creo un nuevo registro
                 $model = $similar;
-
+                
+                if (isset($request_model->name)) {
+                    $model->name = $request_model->name;
+                }
                 if (isset($request_model->rd_public_url)) {
                     $model->rd_public_url = $request_model->rd_public_url;
                 }
