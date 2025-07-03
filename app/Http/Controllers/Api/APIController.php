@@ -2490,11 +2490,31 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
 
         $this->saveLogFromRequest($request);
 
-        $json = $request->json()->all();
-        
-        $data = "";
-        if (isset($json["leads"]))
-            $data = $json["leads"][0];
+         $json = $request->json()->all();
+        $data = $json["leads"][0] ?? [];
+
+        $phone = $data["personal_phone"] ?? null;
+        $name = $data["name"] ?? null;
+
+        // Buscar cliente por teléfono
+        $model = null;
+        if ($phone) {
+            $model = Customer::where('phone', $phone)
+                        ->orWhere('phone2', $phone)
+                        ->first();
+        }
+
+        // Si no existe, se crea uno nuevo
+        if (!$model) {
+            $model = new Customer();
+            $model->phone = $phone;
+            $model->name = $name;
+        } else {
+            // Si ya existe, actualiza el nombre
+            if ($name && $model->name != $name) {
+                $model->name = $name;
+            }
+        }
 
         $tags = "";
 
