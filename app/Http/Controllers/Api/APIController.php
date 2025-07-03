@@ -2487,9 +2487,6 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
     public function updateFromRD(Request $request)
     {
 
-
-        $this->saveLogFromRequest($request);
-
         $this->saveLogFromRequest($request);
 
         $json = $request->json()->all();
@@ -2529,8 +2526,6 @@ https://maquiempanadas.com/maquina-para-hacer-empanadas-semiautomatica-para-dos-
 
         if (isset($data["tags"]))
             $tags = $data["tags"];
-
-        $model = new Customer;
 
 
         $status_id = 0;
