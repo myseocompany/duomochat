@@ -25,7 +25,7 @@
             • Creado por {{ $action->creator->name }}
           @endif
         </div>
-
+        @if(isset($customer))
         {{-- Info cliente --}}
         <div class="mt-2 text-sm">
           <a href="/customers/{{ $action->customer_id }}/show" class="text-blue-600 font-semibold">
@@ -43,6 +43,8 @@
             @if($customer->source) • 🎯 {{ $customer->source->name }} @endif
           </div>
         </div>
+        @endif
+
       </div>
 
       {{-- Checkbox para completar --}}
