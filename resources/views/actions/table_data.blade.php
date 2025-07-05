@@ -9,7 +9,7 @@
 
       <div class="w-full">
         {{-- Estado de acción --}}
-        @if($action->isPending())
+        @if($action->isPending() && !empty($action->due_date))
           <span class="text-xs text-red-500 font-semibold">⏰ Programado para: {{ \Carbon\Carbon::parse($action->due_date)->format('d M Y H:i') }}</span>
         @endif
 
@@ -56,8 +56,8 @@
             data-id="{{ $action->id }}"
             data-note="{{ $action->note }}"
             data-type-id="{{ $action->type_id }}"
-            data-status-id="{{ $customer->status_id }}"
-            data-customer-name="{{ $customer->name }}"
+            data-status-id="{{ optional($customer)->status_id }}"
+            data-customer-name="{{ optional($customer)->name }}"
             class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400 checked:bg-blue-600 checked:border-transparent"
             onclick="this.checked=false"
           >
