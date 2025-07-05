@@ -53,7 +53,7 @@
     <select name="interested_product_id" id="interested_product_id" class="form-control">
       <option value="">Seleccione...</option>
       @foreach ($products as $product)
-        <option value="{{ $product->id }}" @if($product->id == $model->interested_product_id) selected @endif>
+        <option value="{{ $product->id }}">
           {{ $product->name }}
         </option>
       @endforeach
