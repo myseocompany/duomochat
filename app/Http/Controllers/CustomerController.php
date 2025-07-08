@@ -1109,6 +1109,24 @@ class CustomerController extends Controller
         */
 
 
+            // Si tiene una orden asociada, actualiza sus campos también
+        // Crear o actualizar orden
+        $orderData = [
+                'product_id' => $request->interested_product_id,
+                'price' => $request->price,
+                'initial_payment' => $request->initial_payment,
+                'initial_percentage' => $request->initial_percentage,
+            ];
+           // dd($orderData);
+
+    // ✅ Usando el método firstOrder correctamente
+    $firstOrder = $model->firstOrder();
+
+    if ($firstOrder) {
+        $firstOrder->update($orderData);
+    } else {
+        $model->orders()->create($orderData);
+    }
         if ($model->save()) {
             $this->updateDynamicMetaData($request, $model->id);
             /*

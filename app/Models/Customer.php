@@ -407,7 +407,7 @@ class Customer extends Authenticatable
         return $this->hasMany('App\Models\Order');
     }
 
-    function order(){
+    public function firstOrder() {
         return $this->orders->first();
     }
 
