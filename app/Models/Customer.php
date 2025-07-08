@@ -407,6 +407,10 @@ class Customer extends Authenticatable
         return $this->hasMany('App\Models\Order');
     }
 
+    function order(){
+        return $this->orders->first();
+    }
+
     public function getGenderNameAttribute()
     {
         $genders = [

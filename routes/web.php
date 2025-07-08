@@ -445,3 +445,5 @@ Route::get('/landing', [LandingController::class,'productList']);
 
 
 Route::post('/customers/{id}/quick-update', [CustomerController::class, 'quickUpdate'])->name('customers.quick');
+
+Route::get('/orders/{order}/hoja-de-negocios', [App\Http\Controllers\OrderController::class, 'businessSheet'])->name('orders.businessSheet');

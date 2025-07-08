@@ -1,0 +1,36 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mx-auto p-4 bg-white shadow rounded">
+    <h1 class="text-xl font-semibold mb-4">Hoja de Negocios - Proyecto {{ $order->product->name ?? '—' }}</h1>
+
+    <div class="grid grid-cols-2 gap-6 mb-6">
+        <div>
+            <h2 class="font-bold">Datos del comprador</h2>
+            <p><strong>Nombre:</strong> {{ $order->customer->name }}</p>
+            <p><strong>Cédula:</strong> {{ $order->customer->document }}</p>
+            <p><strong>Teléfono:</strong> {{ $order->customer->phone }}</p>
+            <p><strong>Email:</strong> {{ $order->customer->email }}</p>
+            <p><strong>Ciudad:</strong> {{ $order->customer->city }}</p>
+            <p><strong>Dirección:</strong> {{ $order->customer->address }}</p>
+            <p><strong>Ocupación:</strong> {{ $order->customer->position }}</p>
+            <p><strong>Empresa:</strong> {{ $order->customer->business }}</p>
+        </div>
+
+        <div>
+            <h2 class="font-bold">Proyecto</h2>
+            <p><strong>Casa:</strong> {{ $order->product->reference }}</p>
+            <p><strong>Valor total casa:</strong> {{ number_format($order->price, 0, ',', '.') }}</p>
+            <p><strong>Separación:</strong> {{ number_format($order->initial_payment, 0, ',', '.') }}</p>
+            <p><strong>Valor 40%:</strong> {{ number_format($order->initial_percentage_value, 0, ',', '.') }}</p>
+            <p><strong>Valor 60%:</strong> {{ number_format($order->remaining_percentage_value, 0, ',', '.') }}</p>
+            <p><strong>No. de cuotas:</strong> {{ $order->installments_number }}</p>
+            <p><strong>Asesor:</strong> {{ $order->User->name ?? '—' }}</p>
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <a href="{{ route('orders.index') }}" class="text-blue-600 hover:underline">← Volver</a>
+    </div>
+</div>
+@endsection

@@ -616,5 +616,13 @@ class OrderController extends Controller
             }
         }
     }
+
+    
+    public function businessSheet($id)
+    {
+        $order = Order::with(['customer', 'product', 'User'])->findOrFail($id);
+
+        return view('orders.business_sheet', compact('order'));
+    }
     
 }

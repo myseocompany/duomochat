@@ -17,7 +17,12 @@ class Order extends Model
         'delivery_name', 'delivery_email', 'delivery_address', 
         'delivery_phone', 'delivery_to', 'delivery_from', 'delivery_message', 
         'payment_form', 'payment_id', 'session_id', 'created_at', 'updated_at', 'user_ip', 'user_agent',
-        'request_url', 'request_data', 'unique_machine', 'contact_phone2', 'phone2'
+        'request_url', 'request_data', 'unique_machine', 'contact_phone2', 'phone2',
+            'advisor_name',
+    'initial_payment',
+    'initial_percentage_value',
+    'remaining_percentage_value',
+    'installments_number'
     ];
     
 
@@ -74,6 +79,10 @@ class Order extends Model
 
     function products(){
     	return $this->belongsToMany('App\Models\Product', 'order_products');	
+    }
+
+    function product(){
+        return $this->products->first();
     }
 
     function productList(){
