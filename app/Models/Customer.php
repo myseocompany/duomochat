@@ -8,12 +8,16 @@ use Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Namu\WireChat\Traits\Chatable;
+use App\Enums\MaritalStatusType;
+
 
 class Customer extends Authenticatable
 {
     use Chatable;
 
-
+    protected $casts = [
+        'marital_status' => MaritalStatusType::class,
+    ];
     // Custom logic for allowing chat creation
     public function canCreateChats(): bool
     {
