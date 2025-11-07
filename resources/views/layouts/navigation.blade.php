@@ -40,9 +40,9 @@
                             </button>
                             <div x-show="open" @click.away="open = false"
                                  class="absolute mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded z-50">
-                                <a href="/bi/newcustomers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nuevos Clientes</a>
-                                <a href="/bi/purchasefrequency" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Frecuencia de Compra</a>
-                                <a href="/bi/averageTicket" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ticket Promedio</a>
+                                <a href="/reports/customers_time" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Clientes en el Tiempo</a>
+                                <a href="/reports/users/customer/status" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Estados por Usuario</a>
+                                <a href="/reports/users/customer/actions" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Acciones por Usuario</a>
                             </div>
                         </div>
                     @elseif(Auth::user()->role_id == 9)
