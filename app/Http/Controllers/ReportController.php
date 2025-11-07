@@ -241,10 +241,18 @@ class ReportController extends Controller
         // obtengo los usuarios activos
         $dates_array = $this->getDates($request);
 
-        $users = User::where('status_id', '=', 1)
-                    //->where('role_id', 1)
-                    ->where('include_reports', 1)
-                    ->get();
+        $userIdsWithResults = DB::table('customers')
+            ->select('user_id')
+            ->whereNotNull('user_id')
+            ->where(function($query) use ($request, $dates_array, $date_at){
+                if(isset($request->from_date) && $request->from_date != "") {
+                    $query->whereBetween($date_at, $dates_array);
+                }
+            })
+            ->distinct()
+            ->pluck('user_id');
+
+        $users = $this->prepareReportUsers($userIdsWithResults);
         
                 ;
         
@@ -323,19 +331,13 @@ class ReportController extends Controller
     
 
     public function getUsersFromDates($date_array){
-        $users_id = Action::distinct()->select('creator_user_id')
+        $usersWithResults = Action::distinct()->select('creator_user_id')
             ->whereBetween('created_at', $date_array)
             ->whereNotNull('creator_user_id')
-            ->get();
+            ->pluck('creator_user_id');
 
 
-        $users_id = $this->elocuentToArray2($users_id);
-
-
-        $users = User::where('status_id', '=', 1)
-                    ->whereIn('id', $users_id)
-                     ->get();
-        return $users;
+        return $this->prepareReportUsers($usersWithResults);
     }
     public function customersTime(Request $request){
         // obtengo los usuarios activos
@@ -415,6 +417,41 @@ class ReportController extends Controller
         return $array;
     }
 
+    protected function prepareReportUsers($idsWithResults = [], $includeFlagged = true)
+    {
+        $users = collect();
+
+        if ($includeFlagged) {
+            $users = $users->concat(
+                User::where('include_reports', 1)->get()
+            );
+        }
+
+        $idsWithResults = collect($idsWithResults)->filter()->unique();
+
+        if ($idsWithResults->isNotEmpty()) {
+            $usersFromResults = User::whereIn('id', $idsWithResults)->get();
+            $users = $users->concat($usersFromResults);
+
+            $missingIds = $idsWithResults->diff($usersFromResults->pluck('id'));
+
+            foreach ($missingIds as $missingId) {
+                $users->push((object) [
+                    'id' => $missingId,
+                    'name' => 'Usuario #' . $missingId,
+                ]);
+            }
+        }
+
+        return $users
+            ->unique('id')
+            ->sortBy(function ($user) {
+                $name = $user->name ?? ('Usuario #' . $user->id);
+                return strtolower($name);
+            })
+            ->values();
+    }
+
     public function getDates($request){
         $to_date = Carbon::today()->subDays(0); // ayer
         $from_date = Carbon::today()->subDays(7);
@@ -450,20 +487,15 @@ class ReportController extends Controller
         // obtengo los usuarios activos
         $date_array = $this->getDates($request);
 
-        $users_id = Action::distinct()->select('creator_user_id')
+        $usersWithResults = Action::distinct()->select('creator_user_id')
             ->whereBetween('created_at', $date_array)
             ->whereNotNull('creator_user_id')
-            ->get();
-        $users_id = $this->elocuentToArray2($users_id);
+            ->pluck('creator_user_id');
 
-        if(isset($request->user_id)){
-            $users = User::where('status_id', '=', 1)
-                    ->where('id', $request->user_id)
-                     ->get();
+        if(isset($request->user_id) && $request->user_id != ''){
+            $users = $this->prepareReportUsers(collect([$request->user_id]), false);
         }else{
-            $users = User::where('status_id', '=', 1)
-                    ->whereIn('id', $users_id)
-                     ->get();
+            $users = $this->prepareReportUsers($usersWithResults);
         }
 
 
