@@ -125,6 +125,10 @@
                 <a href="/products" class="block py-2 text-gray-700 hover:text-blue-600">Productos</a>
                 <a href="/audiences/1/customers" class="block py-2 text-gray-700 hover:text-blue-600">Benevento</a>
                 <a href="/audiences/2/customers" class="block py-2 text-gray-700 hover:text-blue-600">Emmanuel</a>
+                <div class="pt-2 text-xs font-semibold text-gray-400">Reportes</div>
+                <a href="/reports/customers_time" class="block py-2 text-gray-700 hover:text-blue-600">Clientes en el Tiempo</a>
+                <a href="/reports/users/customer/status" class="block py-2 text-gray-700 hover:text-blue-600">Estados por Usuario</a>
+                <a href="/reports/users/customer/actions" class="block py-2 text-gray-700 hover:text-blue-600">Acciones por Usuario</a>
             @elseif(Auth::user()->role_id == 9)
                 <a href="/orders" class="block py-2 text-gray-700 hover:text-blue-600">Órdenes</a>
             @endif
