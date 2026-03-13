@@ -18,6 +18,7 @@
   <!-- Panel derecho -->
   <div class="md:col-span-2">
     @include('customers.partials.notes')
+    @include('customers.partials.files')
     
   </div>
 </div>
